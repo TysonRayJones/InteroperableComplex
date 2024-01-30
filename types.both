@@ -6,6 +6,7 @@
 #ifndef TYPES_HPP
 #define TYPES_HPP
 
+
 // when C++ parses this header, during C++ backend compilation, or during compilation of C++ user code...
 #ifdef __cplusplus
 
@@ -23,5 +24,6 @@
     #include <complex.h>
     typedef double _Complex qcomp;
 #endif
+
 
 #endif // TYPES_HPP

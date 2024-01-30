@@ -9,8 +9,10 @@
 #ifndef CORE_HPP
 #define CORE_HPP
 
+
 // types.hpp is also a C/C++ agnostic file, so we can import it directly
 #include "types.both"
+
 
 // when this file is being parsed by C++, we disable its name mangling, so
 // that a user's C code can later find these symbols
@@ -21,16 +23,42 @@ extern "C" {
     // both C and C++ agree on 'int' just fine; no issues
     int myIntFunc(int a);
 
-    // the C++ compiler will warn that 'qcomp' (which it recognises as 
+    // sending a qcomp by value is fine for both C and C++
+    double myDoubleFunc(qcomp a);
+
+    // the C++ compiler would warn here that 'qcomp' (which it recognises as 
     // a C++ templated type) is not compatible with C, so should not be
-    // in an extern "C". Because we know the type is the C++ complex type,
-    // which has the same layout as C's complex type, we ignore it.
-    // But beware... they may not have the same ABI in some compilers!
-    qcomp myCompFunc(qcomp a);
+    // in an extern "C". While we know the type is the C++ complex type,
+    // which has the same layout as C's complex type, we do not know they are
+    // compatible between the binary interfaces. So we avoid below...
+    
+    // qcomp myCompFunc(qcomp a);
+    
 
 // end de-mangler
 #ifdef __cplusplus
 }
 #endif
+
+
+// when this file is being parsed by C++, for the backend or for a
+// C++ user's code, we directly resolve the C++-only function
+#ifdef __cplusplus
+    qcomp myCompFunc(qcomp a);
+
+// but when parsed by user's C code, we have to instead use the
+// alternative C++ function which safely passes the complex type
+// by pointer, not by return value. We define myCompFunc here 
+// (which to C, is so far completely unknown due to C++ name mangling),
+// and wrap the safe C++ function, ultimately achieving the same C++ interface
+#else
+    void myCompFunc_alt(qcomp* out, qcomp in);
+    qcomp myCompFunc(qcomp a) {
+        qcomp out;
+        myCompFunc_alt(&out, a);
+        return out;
+    }
+#endif
+
 
 #endif // CORE_HPP

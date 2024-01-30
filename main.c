@@ -11,9 +11,11 @@
 int main() {
 
     qcomp x = 1. + 1.i;
-    qcomp y = myCompFunc(x);
+    double r = myDoubleFunc(x);
+    printf("r = %g\n", r);
 
-    printf("y = %g + i(%g)\n", creal(x), cimag(y));
+    qcomp y = myCompFunc(x);
+    printf("y = %g + i(%g)\n", creal(y), cimag(y));
 
     return 0;
 }
