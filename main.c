@@ -10,7 +10,7 @@
 
 int main() {
 
-    qcomp x = 1 + 1i;
+    qcomp x = 1. + 1.i;
     qcomp y = myCompFunc(x);
 
     printf("y = %g + i(%g)\n", creal(x), cimag(y));

@@ -13,6 +13,9 @@
     #include <complex>
     typedef std::complex<double> qcomp;
 
+    // enable literals
+    using namespace std::complex_literals;
+
 // when C parses this header, during compilation of C user code...
 #else
 

@@ -1,6 +1,6 @@
 
 echo "compiling backend in C++..."
-g++ -c core.cpp -std=c++11 -o core.o
+g++ -c core.cpp -std=c++14 -o core.o
 
 echo "compiling main in C++..."
 g++ main.cpp core.o -std=c++14 -o main_cpp
