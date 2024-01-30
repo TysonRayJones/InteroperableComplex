@@ -1,0 +1,24 @@
+/*
+ * This C/C++ file claims two definitions of qcomp, depending on who is asking.
+ * It tells both C and C++ compilers that qcomp is their native complex type.
+ */
+
+#ifndef TYPES_HPP
+#define TYPES_HPP
+
+// when C++ parses this header, during C++ backend compilation, or during compilation of C++ user code...
+#ifdef __cplusplus
+
+    // resolve qcomp as the C++ complex type
+    #include <complex>
+    typedef std::complex<double> qcomp;
+
+// when C parses this header, during compilation of C user code...
+#else
+
+    // pretend that qcomp was the C complex type
+    #include <complex.h>
+    typedef double _Complex qcomp;
+#endif
+
+#endif // TYPES_HPP
