@@ -6,7 +6,7 @@
  */
 
 #include <stdio.h>
-#include "core.hpp"
+#include "core.both"
 
 int main() {
 

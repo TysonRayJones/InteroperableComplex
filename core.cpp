@@ -5,7 +5,7 @@
  * (via extern "C") so that a user's C code can use these functions.
  */
 
-#include "core.hpp"
+#include "core.both"
 
 // disable name-mangling so the below symbols, once compiled by a
 // C++ compiler, can still be invoked within a C program

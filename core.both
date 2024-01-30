@@ -10,7 +10,7 @@
 #define CORE_HPP
 
 // types.hpp is also a C/C++ agnostic file, so we can import it directly
-#include "types.hpp"
+#include "types.both"
 
 // when this file is being parsed by C++, we disable its name mangling, so
 // that a user's C code can later find these symbols
