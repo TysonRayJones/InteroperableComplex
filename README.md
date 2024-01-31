@@ -11,8 +11,9 @@ Our requirements are:
 
 This repo contains files:
 - [`src/types.both`](src/types.both) which defines `qcomp = std::complex<double>` (`C++` type) or `qcomp = double complex` (`C` type)
-- [`src/core.cpp`](src/core.cpp) which defines all backend functions using strictly `qcomp = std::complex<double>` (`C++` type). It also defines some C-compatible wrappers.
-- [`src/core.both`](src/core.both) which declares only compiler-compatible functions to the parsing compiler. It defines `C`-only wrappers of `src/core.cpp`'s C-compatible wrappers.
+- [`src/core.cpp`](src/core.cpp) which defines all backend functions using strictly `qcomp = std::complex<double>` (`C++` type). It includes all functions which are agnostic to `C` and `C++`, and functions only callable directly by `C++`.
+- [`src/alts.cpp`](src/alts.cpp) defines `C`-compatible wrappers for the functions in `core.cpp` which are only directly callable by `C++`.
+- [`src/core.both`](src/core.both) which declares only compiler-compatible functions to the parsing compiler. It defines `C`-only wrappers of `src/alt.cpp`'s C-compatible wrappers.
 - [`main.cpp`](main.cpp) which is an example `C++` user's code
 - [`main.c`](main.c) which is an example `C` user's code
 - [`compile.sh`](compile.sh) which compiles both user's codes

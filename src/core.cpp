@@ -9,8 +9,8 @@
 
 
 // functions which pass or return the C++ type by-value can only be called
-// directly by a C++ binary; we will define C-friendly alternatives for them below,
-// which will be wrapped by C in the core header to achieve the same signature
+// directly by a C++ binary; we define C-friendly alternatives for them in alts.cpp,
+// which will be wrapped by C in the core header to achieve the same signature as here
 qcomp myCompFunc(qcomp a) {
     return a + a;
 }
@@ -34,14 +34,6 @@ extern "C" {
         for (int i=0; i<len; i++)
             r += real(arr[i]);
         return r;
-    }
-
-    // C-friendly alternatives to the C++ funcs which handle qcomp values
-    double myDoubleFunc_alt(qcomp* a) {
-        return myDoubleFunc(*a);
-    }
-    void myCompFunc_alt(qcomp* out, qcomp *in) {
-        *out = myCompFunc(*in);
     }
 
 // end de-mangler
