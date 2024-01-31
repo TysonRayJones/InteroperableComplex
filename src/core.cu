@@ -1,12 +1,25 @@
-
-#include <cuComplex.h>
+/*
+ * This is the C++ CUDA backend, to be compiled with nvcc. 
+ * Here, qcomp is always resolved to the C++ complex type,
+ * but this cannot be used by kernels deployed to the device;
+ * instead, we must use NVIDIA's cuComplex types (aliased to
+ * cu_qcomp), which  thankfully have the same memory-layout as 
+ * std::complex. This means we can pass pointers to qcomp and
+ * cu_qcomp interchangeably, and even cast values back and 
+ * forth via reinterpret_cast. We disable name-mangling on the
+ * functions we intend to be directly callable by a C user.
+ */
 
 #include "core.both"
 
 
-// we have to define our own overloads, REEEE
+// create cu_qcomp as a device-friendly equivalent of qcomp
+
+#include <cuComplex.h>
 
 typedef cuDoubleComplex cu_qcomp;
+
+// annoyingly, we must define the overloads ourself
 
 __host__ __device__ inline cu_qcomp operator + (const cu_qcomp& a, const cu_qcomp& b) {
     cu_qcomp res;
@@ -16,8 +29,10 @@ __host__ __device__ inline cu_qcomp operator + (const cu_qcomp& a, const cu_qcom
 }
 
 
-// here, we attempt to pass 'qcomp' straight to a 'cu_qcomp' argument.
-// we expect this won't work; we will have to reinterpret_cast instead
+// here, we  pass a 'qcomp' value straight to a 'cu_qcomp' argument,
+// leveraging that their memory layouts are equivalent, via reinterpret_cast.
+// Because the host function accepts a 'qcomp' directly, it is C++-callable
+// only, so we do not disable name-mangling.
 
 __global__ void kernel_myDoubleFunc(cu_qcomp in, double* d_out){
     *d_out = in.x;
@@ -38,9 +53,10 @@ double myDoubleFunc(qcomp in) {
 }
 
 
-// here, we copy a qcomp straight into a cu_qcomp
-// pointer, and back. We expect this to work, because
-// qcomp and cu_qcomp have the same memory layout
+// here, we memcpy a qcomp straight into a cu_qcomp, and back.
+// this is fine because of their identical memory layouts.
+// Because the host function accepts a 'qcomp' directly, it is C++-callable
+// only, so we do not disable name-mangling.
 
 __global__ void kernel_myCompFunc(cu_qcomp* d_a){
     *d_a = *d_a + *d_a;
@@ -61,16 +77,14 @@ qcomp myCompFunc(qcomp a) {
 
 
 // here, we copy a host-memory qcomp-array to a device-memory cu_qcomp-array.
-// we expect this to work; it is identical to the above situation, albeit we
-// have more than one qcomp to copy
+// this is equivalent to above, albeit copying multiple values. We disable
+// name-mangling on the host code, because it is to be directly callable in C
 
 __global__ void kernel_myCompArrFunc(cu_qcomp* d_arr, int len, double* d_out) {
     *d_out = 0;
     for (int i=0; i<len; i++)
         *d_out += d_arr[i].x;
 }
-
-// disable name-mangling; this function be directly called by C
 
 extern "C" double myCompArrFunc(qcomp* arr, int len) {
 
