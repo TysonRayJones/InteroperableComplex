@@ -31,3 +31,8 @@ In essence:
 - the user's `C` code is "tricked" into believing the backend used the `C` type
 - the `C` and `C++` binaries can exchange _pointers_ to `qcomp`
 - the `C` and `C++` binaries cannot exchange `qcomp` _by value_; so `C++` defines functions with `qcomp` in the signature only for `C++` (name-mangling _on_), and provides alternate `C`-friendly versions which exchange pointers. The `C` compiler additionally prepares `C`-facing wrappers of these friendly versions, mimmicking the `C++` interface
+
+
+The architecture resembles:
+
+> <img src='diagram.png' width='50%'>
