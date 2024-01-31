@@ -10,18 +10,18 @@ Our requirements are:
 - a `C` user can pass `qcomp`'s of underlying type `double complex` to/from the library
 
 This repo contains files:
-- `types.both` which defines `qcomp = std::complex<double>` (`C++` type) or `qcomp = double complex` (`C` type)
-- `core.both` which declares function `myCompFunc`, which takes and accepts `qcomp`
-- `core.cpp` which defines function `myCompFunc`, wherein `qcomp` is assumed to be `std::complex<double>` (`C++` type)
-- `main.cpp` which is an example `C++` user's code
-- `main.c` which is an example `C` user's code
-- `compile.sh` which compiles both user's code
+- [`src/types.both`](src/types.both) which defines `qcomp = std::complex<double>` (`C++` type) or `qcomp = double complex` (`C` type)
+- [`src/core.cpp`](src/core.cpp) which defines all backend functions using strictly `qcomp = std::complex<double>` (`C++` type). It also defines some C-compatible wrappers.
+- [`src/core.both`](src/core.both) which declares only compiler-compatible functions to the parsing compiler. It defines `C`-only wrappers of `src/core.cpp`'s C-compatible wrappers.
+- [`main.cpp`](main.cpp) which is an example `C++` user's code
+- [`main.c`](main.c) which is an example `C` user's code
+- [`compile.sh`](compile.sh) which compiles both user's codes
 
 The proposed solution assumes that `std::complex<double>` and `double complex` have identical layouts. 
 - we first compile the backend in `C++` (wherein `qcomp` is the `C++` type)
 - we compile the user's `C++` code, trivially, wherein `qcomp` is the `C++` type
 - we compile the user's `C` code, wherein `qcomp` is the `C` type
-- both user codes parse `core.both`, wherein `qcomp` is ambiguous and is resolved to the compiler's native type
+- both user codes parse `core.both`, wherein `qcomp` is ambiguous
 - `types.both` is parsed by both `C++` and `C`, which explicitly resolves `qcomp` to the compiler's native type
 - backend functions which pass or return `qcomp` _by value_ can only be defined directly for `C++`. We must provide an alternate return-by-pointer which a `C` binary can safely call. These permittedly-name-mangled functions are replicated in code compiled only by `C`, by wrapping the alternate function.
 
@@ -35,4 +35,4 @@ In essence:
 
 The architecture resembles:
 
-> <img src='diagram.png' width='50%'>
+> <img src='doc/diagram.png' width='50%'>
