@@ -3,7 +3,7 @@ set -e
 
 cflags='-Isrc -std=c99'
 cppflags='-Isrc -std=c++14'
-cudaflags='-Isrc -std=c++14'
+cudaflags='-Isrc -std=c++14 -arch=sm_61'
 
 echo "compiling CPU backend in C++..."
 g++ -c src/core.cpp $cppflags -o core.o
