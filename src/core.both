@@ -47,16 +47,16 @@ extern "C" {
 // and wrap the safe C++ function, ultimately achieving the same C++ interface
 #else
 
-    void myCompFunc_alt(qcomp* out, qcomp *in);
+    void alt_myCompFunc(qcomp* out, qcomp *in);
     qcomp myCompFunc(qcomp a) {
         qcomp out;
-        myCompFunc_alt(&out, &a);
+        alt_myCompFunc(&out, &a);
         return out;
     }
 
-    double myDoubleFunc_alt(qcomp* a);
+    double alt_myDoubleFunc(qcomp* a);
     double myDoubleFunc(qcomp a) {
-        return myDoubleFunc_alt(&a);
+        return alt_myDoubleFunc(&a);
     }
 
 #endif
