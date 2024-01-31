@@ -17,10 +17,10 @@
 extern "C" {
 
     // C-friendly alternatives to the C++ funcs which handle qcomp values
-    double myDoubleFunc_alt(qcomp* a) {
+    double alt_myDoubleFunc(qcomp* a) {
         return myDoubleFunc(*a);
     }
-    void myCompFunc_alt(qcomp* out, qcomp *in) {
+    void alt_myCompFunc(qcomp* out, qcomp *in) {
         *out = myCompFunc(*in);
     }
 
