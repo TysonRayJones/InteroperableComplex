@@ -11,7 +11,7 @@ typedef cuDoubleComplex cu_qcomp;
 __host__ __device__ inline cu_qcomp operator + (const cu_qcomp& a, const cu_qcomp& b) {
     cu_qcomp res;
     res.x = a.x + b.x;
-    res.y = a.y + b.y
+    res.y = a.y + b.y;
     return res;
 }
 
@@ -19,21 +19,22 @@ __host__ __device__ inline cu_qcomp operator + (const cu_qcomp& a, const cu_qcom
 // here, we attempt to pass 'qcomp' straight to a 'cu_qcomp' argument.
 // we expect this won't work; we will have to reinterpret_cast instead
 
-__global__ void kernel_myDoubleFunc(cu_qcomp in, qreal* d_out){
-    *d_out = index.x;
+__global__ void kernel_myDoubleFunc(cu_qcomp in, double* d_out){
+    *d_out = in.x;
 }
 
 double myDoubleFunc(qcomp in) {
 
-    qreal* d_out;
-    cudaMalloc(&d_out, sizeof(qreal));
+    double* d_out;
+    cudaMalloc(&d_out, sizeof(double));
 
-    kernel_myDoubleFunc<<<1, 1>>>(in, d_out);
+    cu_qcomp cu_in = reinterpret_cast<cu_qcomp>(in);
+    kernel_myDoubleFunc<<<1, 1>>>(cu_in, d_out);
 
-    qreal out;
+    double out;
     cudaMemcpy(&out, d_out, sizeof(qcomp), cudaMemcpyDeviceToHost);
     cudaFree(d_out);
-    return a;
+    return out;
 }
 
 
