@@ -85,10 +85,10 @@ extern "C" double myCompArrFunc(qcomp* arr, int len) {
     kernel_myCompArrFunc<<<1, 1>>>(d_arr, len, d_out);
 
     double out;
-    cudaMemcpy(&out, d_out, size(double), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&out, d_out, sizeof(double), cudaMemcpyDeviceToHost);
     cudaFree(d_arr);
     cudaFree(d_out);
-    return a;
+    return out;
 }
 
 
