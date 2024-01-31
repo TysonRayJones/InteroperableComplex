@@ -32,7 +32,7 @@ double myDoubleFunc(qcomp in) {
     kernel_myDoubleFunc<<<1, 1>>>(cu_in, d_out);
 
     double out;
-    cudaMemcpy(&out, d_out, sizeof(qcomp), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&out, d_out, sizeof(double), cudaMemcpyDeviceToHost);
     cudaFree(d_out);
     return out;
 }
