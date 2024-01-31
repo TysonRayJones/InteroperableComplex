@@ -33,6 +33,10 @@ In essence:
 - the `C` and `C++` binaries cannot exchange `qcomp` _by value_; so `C++` defines functions with `qcomp` in the signature only for `C++` (name-mangling _on_), and provides alternate `C`-friendly versions which exchange pointers. The `C` compiler additionally prepares `C`-facing wrappers of these friendly versions, mimmicking the `C++` interface
 
 
-The architecture resembles:
+The full architecture resembles:
 
 > <img src='doc/diagram.png' width='50%'>
+
+although it is easier understood if we remove the straightforward agnostic functions:
+
+> <img src='doc/diagram_alt.png' width='50%'>
