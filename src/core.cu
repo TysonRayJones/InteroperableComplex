@@ -28,7 +28,7 @@ double myDoubleFunc(qcomp in) {
     double* d_out;
     cudaMalloc(&d_out, sizeof(double));
 
-    cu_qcomp cu_in = reinterpret_cast<cu_qcomp>(in);
+    cu_qcomp cu_in = reinterpret_cast<cu_qcomp&>(in);
     kernel_myDoubleFunc<<<1, 1>>>(cu_in, d_out);
 
     double out;
