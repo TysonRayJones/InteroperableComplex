@@ -23,10 +23,11 @@ The proposed solution assumes that `std::complex<double>` and `double complex` h
 - we compile the user's `C` code, wherein `qcomp` is the `C` type
 - both user codes parse `core.both`, wherein `qcomp` is ambiguous and is resolved to the compiler's native type
 - `types.both` is parsed by both `C++` and `C`, which explicitly resolves `qcomp` to the compiler's native type
-- backend functions which return `qcomp` can only be defined directly for `C++`, and must provide an alternate return-by-pointer which a `C` binary can safely call. These permittedly-name-mangled functions are replicated in code compiled only by `C`, by wrapping the alternate function.
+- backend functions which pass or return `qcomp` _by value_ can only be defined directly for `C++`. We must provide an alternate return-by-pointer which a `C` binary can safely call. These permittedly-name-mangled functions are replicated in code compiled only by `C`, by wrapping the alternate function.
 
 In essence:
 - user's code uses the native type of their language (`C` vs `C++`)
 - the backend always uses the `C++` type
 - the user's `C` code is "tricked" into believing the backend used the `C` type
-- when the `C` code can't receive the `C++` in a return, the function is wrapped by `C`-only code
+- the `C` and `C++` binaries can exchange _pointers_ to `qcomp`
+- the `C` and `C++` binaries cannot exchange `qcomp` _by value_; so `C++` defines functions with `qcomp` in the signature only for `C++` (name-mangling _on_), and provides alternate `C`-friendly versions which exchange pointers. The `C` compiler additionally prepares `C`-facing wrappers of these friendly versions, mimmicking the `C++` interface

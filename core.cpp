@@ -8,11 +8,14 @@
 #include "core.both"
 
 
-// functions which return the C++ type can only be directly by a
-// C++ binary; we will define C-friendly alternatives for them below,
+// functions which pass or return the C++ type by-value can only be called
+// directly by a C++ binary; we will define C-friendly alternatives for them below,
 // which will be wrapped by C in the core header to achieve the same signature
 qcomp myCompFunc(qcomp a) {
     return a + a;
+}
+double myDoubleFunc(qcomp a) {
+    return real(a);
 }
 
 
@@ -25,14 +28,20 @@ extern "C" {
         return 2*a;
     }
 
-    // C binaries can pass qcomp to C++ binaries
-    double myDoubleFunc(qcomp a) {
-        return real(a);
+    // pointers to qcomp(s) are okay
+    double myCompArrFunc(qcomp* arr, int len) {
+        double r = 0;
+        for (int i=0; i<len; i++)
+            r += real(arr[i]);
+        return r;
     }
 
-    // C-friendly alternative to myCompFunc, which C will wrap
-    void myCompFunc_alt(qcomp* out, qcomp in) {
-        *out = myCompFunc(in);
+    // C-friendly alternatives to the C++ funcs which handle qcomp values
+    double myDoubleFunc_alt(qcomp* a) {
+        return myDoubleFunc(*a);
+    }
+    void myCompFunc_alt(qcomp* out, qcomp *in) {
+        *out = myCompFunc(*in);
     }
 
 // end de-mangler

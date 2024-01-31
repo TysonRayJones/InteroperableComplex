@@ -15,7 +15,8 @@
 
 
 // when this file is being parsed by C++, we disable its name mangling, so
-// that a user's C code can later find these symbols
+// that a user's C code can later find these symbols. We can only directly
+// expose the C++ functions which do not pass/return qcomp by-value.
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,17 +24,8 @@ extern "C" {
     // both C and C++ agree on 'int' just fine; no issues
     int myIntFunc(int a);
 
-    // sending a qcomp by value is fine for both C and C++
-    double myDoubleFunc(qcomp a);
-
-    // the C++ compiler would warn here that 'qcomp' (which it recognises as 
-    // a C++ templated type) is not compatible with C, so should not be
-    // in an extern "C". While we know the type is the C++ complex type,
-    // which has the same layout as C's complex type, we do not know they are
-    // compatible between the binary interfaces. So we avoid below...
-    
-    // qcomp myCompFunc(qcomp a);
-    
+    // both can handle pointers to qcomp fine
+    double myCompArrFunc(qcomp* arr, int len);
 
 // end de-mangler
 #ifdef __cplusplus
@@ -42,9 +34,11 @@ extern "C" {
 
 
 // when this file is being parsed by C++, for the backend or for a
-// C++ user's code, we directly resolve the C++-only function
+// C++ user's code, we directly resolve the C++-only function, which
+// are functions which receive/return qcomp by-value
 #ifdef __cplusplus
     qcomp myCompFunc(qcomp a);
+    double myDoubleFunc(qcomp a);
 
 // but when parsed by user's C code, we have to instead use the
 // alternative C++ function which safely passes the complex type
@@ -52,12 +46,19 @@ extern "C" {
 // (which to C, is so far completely unknown due to C++ name mangling),
 // and wrap the safe C++ function, ultimately achieving the same C++ interface
 #else
-    void myCompFunc_alt(qcomp* out, qcomp in);
+
+    void myCompFunc_alt(qcomp* out, qcomp *in);
     qcomp myCompFunc(qcomp a) {
         qcomp out;
-        myCompFunc_alt(&out, a);
+        myCompFunc_alt(&out, &a);
         return out;
     }
+
+    double myDoubleFunc_alt(qcomp* a);
+    double myDoubleFunc(qcomp a) {
+        return myDoubleFunc_alt(&a);
+    }
+
 #endif
 
 
