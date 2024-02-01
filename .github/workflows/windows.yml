@@ -3,7 +3,7 @@ name: Windows
 on:
   push:
 
-env.
+env:
   C_FLAGS: -Isrc -std:c99
   CPP_FLAGS: -Isrc -std:c++14
   CUDA_FLAGS: -Isrc -std:c++14
