@@ -8,15 +8,15 @@ env:
   CPP_FLAGS: '-Isrc -std=c++14'
   CUDA_FLAGS: '-Isrc -std=c++14'
 
-strategy:
-  matrix:
-    os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
-
 jobs:
 
   cpp_cpu:
     name: C++ (CPU)
     runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
 
     steps:
       - uses: actions/checkout@v4
