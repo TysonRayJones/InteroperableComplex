@@ -52,7 +52,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.o core.o alts.o $CUDA_FLSGS -o main
+          nvcc main.o core.o alts.o $CUDA_FLAGS -o main
 
   c_cpu:
     name: C (CPU)
@@ -96,4 +96,4 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.o core.o alts.o $CUDA_FLSGS -o main
+          nvcc main.o core.o alts.o $CUDA_FLAGS -o main

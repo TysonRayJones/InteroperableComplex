@@ -21,13 +21,13 @@ jobs:
       - name: compile backend
         shell: cmd
         run: |
-          cl -c src/core.cpp $CPP_FLAGS -o core.o
-          cl -c src/alts.cpp $CPP_FLAGS -o alts.o
+          cl -c src/core.cpp $CPP_FLAGS
+          cl -c src/alts.cpp $CPP_FLAGS
 
       - name: compile and link main
         shell: cmd
         run: |
-          cl main.cpp core.o alts.o $CPP_FLAGS -o main.exe
+          cl main.cpp core.obj alts.obj $CPP_FLAGS
 
       - name: run main
         shell: cmd
@@ -48,18 +48,18 @@ jobs:
       - name: compile backend
         shell: cmd
         run: |
-          nvcc -c src/core.cu $CUDA_FLAGS -o core.o
-          cl -c src/alts.cpp $CPP_FLAGS -o alts.o
+          nvcc -c src/core.cu $CUDA_FLAGS
+          cl -c src/alts.cpp $CPP_FLAG
 
       - name: compile main
         shell: cmd
         run: |
-          cl -c main.cpp $CPP_FLAGS -o main.o
+          cl -c main.cpp $CPP_FLAGS
 
       - name: link
         shell: cmd
         run: |
-          nvcc main.o core.o alts.o $CUDA_FLSGS -o main.exe
+          nvcc main.obj core.obj alts.obj $CUDA_FLAGS
 
   c_cpu:
     name: C (CPU)
@@ -71,13 +71,13 @@ jobs:
       - name: compile backend
         shell: cmd
         run: |
-          cl -c src/core.cpp $CPP_FLAGS -o core.o
-          cl -c src/alts.cpp $CPP_FLAGS -o alts.o
+          cl -c src/core.cpp $CPP_FLAGS
+          cl -c src/alts.cpp $CPP_FLAGS
 
       - name: compile and link main
         shell: cmd
         run: |
-          cl main.c core.o alts.o $C_FLAGS -o main.exe
+          cl main.c core.obj alts.obj $C_FLAGS
 
       - name: run main
         shell: cmd
@@ -98,15 +98,15 @@ jobs:
       - name: compile backend
         shell: cmd
         run: |
-          nvcc -c src/core.cu $CUDA_FLAGS -o core.o
-          cl -c src/alts.cpp $CPP_FLAGS -o alts.o
+          nvcc -c src/core.cu $CUDA_FLAGS
+          cl -c src/alts.cpp $CPP_FLAGS
 
       - name: compile main
         shell: cmd
         run: |
-          cl -c main.c $CPP_FLAGS -o main.o
+          cl -c main.c $CPP_FLAGS
 
       - name: link
         shell: cmd
         run: |
-          nvcc main.o core.o alts.o $CUDA_FLSGS -o main
+          nvcc main.obj core.obj alts.obj $CUDA_FLSGS -o main
