@@ -23,7 +23,7 @@
     // pretend that qcomp was the C complex type
     #include <complex.h>
 
-    // which is either MSVC's custom complex
+    // which is either MSVC's custom C complex
     #if _MSC_VER
         typedef _Dcomplex qcomp;
 
