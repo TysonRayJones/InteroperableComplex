@@ -26,6 +26,7 @@ jobs:
       - name: compile main
         run: |
           $wtf=$env:CPP_FLAGS
+          $wtf='-Isrc'
           echo $wtf
           cl -c main.cpp $wtf
 
