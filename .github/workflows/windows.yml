@@ -64,7 +64,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ steps.cuda-toolkit.outputs.CUDA_PATH }}
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/include"
 
   c_cpu:
     name: C (CPU)
@@ -114,4 +114,4 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}/include"
