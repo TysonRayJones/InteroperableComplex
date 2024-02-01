@@ -46,7 +46,7 @@ jobs:
       - uses: Jimver/cuda-toolkit@v0.2.14
         id: cuda-toolkit
         with:
-          sub-packages: '["nvcc", "visual_studio_integration"]'
+          sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
           method: 'network'
 
       - name: checking CUDA installation
@@ -122,7 +122,7 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
         with: 
-          sub-packages: '["nvcc", "visual_studio_integration"]'
+          sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
           method: 'network'
 
       - name: compile backend
