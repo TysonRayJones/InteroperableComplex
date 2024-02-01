@@ -20,8 +20,8 @@ jobs:
 
       - name: test flags
         run: |
-          echo '$env:CPP_FLAGS'
-          echo '%CPP_FLAGS$'
+          echo $env:CPP_FLAGS
+          echo %CPP_FLAGS$
 
       - name: compile backend
         run: |
