@@ -21,7 +21,6 @@ jobs:
       - name: test flags
         run: |
           echo $env:CPP_FLAGS
-          echo %CPP_FLAGS$
 
       - name: compile backend
         run: |
@@ -30,7 +29,7 @@ jobs:
 
       - name: compile and link main
         run: |
-          cl main.cpp core.obj alts.obj $env:CPP_FLAGS
+          cl $env:CPP_FLAGS main.cpp core.obj alts.obj
 
       - name: run main
         run: |
