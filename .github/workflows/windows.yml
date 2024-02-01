@@ -54,7 +54,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc /Fe: main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
+          nvcc -Femain.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
 
   c_cpu:
     name: C (CPU)
