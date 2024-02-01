@@ -48,12 +48,17 @@ jobs:
           sub-packages: '["nvcc", "visual_studio_integration"]'
           method: 'network'
 
-      - name: check CUDA path
+      - name: check CUDA according to doc 
         run: |
           echo "Cuda install location: ${{steps.cuda-toolkit.outputs.CUDA_PATH}}"
-          echo "${{ env.GITHUB_PATH }}"
+        
+      - name: check CUDA path according to me
+        run: |
           echo "${{ env.CUDA_PATH }}"
-          echo $env:CUDA_PATH
+
+      - name: check CUDA path according to workflow
+        run: |
+          ls $env:CUDA_PATH
 
       - name: compile backend
         run: |
@@ -66,7 +71,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ steps.cuda-toolkit.outputs.CUDA_PATH }}
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ env.CUDA_PATH }}\include
 
   c_cpu:
     name: C (CPU)
@@ -116,4 +121,4 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ env.CUDA_PATH }}\include
