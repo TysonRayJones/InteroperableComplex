@@ -1,0 +1,35 @@
+name: Linux
+
+on:
+  push:
+
+env:
+  C_FLAGS: '-Isrc -std=c99'
+  CPP_FLAGS: '-Isrc -std=c++14'
+
+jobs:
+
+  cpp_cpu:
+    name: C++ (CPU)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install dependencies
+        run: | 
+          sudo apt-get update 
+          sudo apt-get install -y uuid-dev build-essential
+
+      - name: compile backend
+        run: |
+          g++ -c src/core.cpp $CPP_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+
+      - name: compile and link main
+        run: |
+          g++ main.cpp core.o alts.o $CPP_FLAGS -o main
+
+      - name: run main
+        run: |
+          main
