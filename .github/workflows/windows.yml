@@ -25,11 +25,11 @@ jobs:
 
       - name: compile and link main
         run: |
-          cl -Femain.exe main.cpp core.obj alts.obj ${{ env.CPP_FLAGS }}
+          cl main.cpp core.obj alts.obj ${{ env.CPP_FLAGS }}
 
       - name: run main
         run: |
-          main.exe
+          ./main.exe
 
   cpp_gpu:
     name: C++ (GPU)
@@ -71,11 +71,15 @@ jobs:
 
       - name: compile and link main
         run: |
-          cl -Femain.exe main.c core.obj alts.obj ${{ env.C_FLAGS }}
+          cl main.c core.obj alts.obj ${{ env.C_FLAGS }}
+
+      - name: arg test
+        run : |
+          echo '${{ env.CPP_FLAGS }}'
 
       - name: run main
         run: |
-          main.exe
+          ./main.exe
 
   c_gpu:
     name: C (GPU)
