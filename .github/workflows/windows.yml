@@ -11,7 +11,7 @@ env:
   CPP_FLAGS: -Isrc -std:c++14
 
   # NVCC requires = syntax (yes, really!)
-  CUDA_FLAGS: -Isrc -std=c++14 -arch=sm_61
+  CUDA_FLAGS: -Isrc -std=c++14 -arch=sm_61 -lcudart
 
 jobs:
 
@@ -62,6 +62,9 @@ jobs:
             -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}" \
             -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\bin" \
             -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include" \
+            -L"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}" \
+            -L"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\bin" \
+            -L"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include" \
             ' >> $GITHUB_OUTPUT
 
       - name: checking CUDA vars
