@@ -19,18 +19,15 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
 
       - name: compile backend
-        shell: cmd
         run: |
           cl -c src/core.cpp $env:CPP_FLAGS
           cl -c src/alts.cpp $env:CPP_FLAGS
 
       - name: compile and link main
-        shell: cmd
         run: |
           cl main.cpp core.obj alts.obj $env:CPP_FLAGS
 
       - name: run main
-        shell: cmd
         run: |
           main.exe
 
@@ -47,18 +44,15 @@ jobs:
           method: 'network'
 
       - name: compile backend
-        shell: cmd
         run: |
           nvcc -c src/core.cu $env:CUDA_FLAGS
           cl -c src/alts.cpp $env:CPP_FLAGS
 
       - name: compile main
-        shell: cmd
         run: |
           cl -c main.cpp $env:CPP_FLAGS
 
       - name: link
-        shell: cmd
         run: |
           nvcc main.obj core.obj alts.obj $env:CUDA_FLAGS
 
@@ -71,18 +65,15 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
 
       - name: compile backend
-        shell: cmd
         run: |
           cl -c src/core.cpp $env:CPP_FLAGS
           cl -c src/alts.cpp $env:CPP_FLAGS
 
       - name: compile and link main
-        shell: cmd
         run: |
           cl main.c core.obj alts.obj $env:C_FLAGS
 
       - name: run main
-        shell: cmd
         run: |
           main.exe
 
@@ -99,17 +90,14 @@ jobs:
           method: 'network'
 
       - name: compile backend
-        shell: cmd
         run: |
           nvcc -c src/core.cu $env:CUDA_FLAGS
           cl -c src/alts.cpp $env:CPP_FLAGS
 
       - name: compile main
-        shell: cmd
         run: |
           cl -c main.c $env:CPP_FLAGS
 
       - name: link
-        shell: cmd
         run: |
           nvcc main.obj core.obj alts.obj $env:CUDA_FLAGS -o main
