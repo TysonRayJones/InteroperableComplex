@@ -21,13 +21,13 @@ jobs:
       - name: compile backend
         shell: cmd
         run: |
-          cl++ -c src/core.cpp $CPP_FLAGS -o core.o
-          cl++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          cl -c src/core.cpp $CPP_FLAGS -o core.o
+          cl -c src/alts.cpp $CPP_FLAGS -o alts.o
 
       - name: compile and link main
         shell: cmd
         run: |
-          cl++ main.cpp core.o alts.o $CPP_FLAGS -o main.exe
+          cl main.cpp core.o alts.o $CPP_FLAGS -o main.exe
 
       - name: run main
         shell: cmd
@@ -49,12 +49,12 @@ jobs:
         shell: cmd
         run: |
           nvcc -c src/core.cu $CUDA_FLAGS -o core.o
-          cl++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          cl -c src/alts.cpp $CPP_FLAGS -o alts.o
 
       - name: compile main
         shell: cmd
         run: |
-          cl++ -c main.cpp $CPP_FLAGS -o main.o
+          cl -c main.cpp $CPP_FLAGS -o main.o
 
       - name: link
         shell: cmd
@@ -71,8 +71,8 @@ jobs:
       - name: compile backend
         shell: cmd
         run: |
-          cl++ -c src/core.cpp $CPP_FLAGS -o core.o
-          cl++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          cl -c src/core.cpp $CPP_FLAGS -o core.o
+          cl -c src/alts.cpp $CPP_FLAGS -o alts.o
 
       - name: compile and link main
         shell: cmd
@@ -99,7 +99,7 @@ jobs:
         shell: cmd
         run: |
           nvcc -c src/core.cu $CUDA_FLAGS -o core.o
-          cl++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          cl -c src/alts.cpp $CPP_FLAGS -o alts.o
 
       - name: compile main
         shell: cmd
