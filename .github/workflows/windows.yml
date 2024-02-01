@@ -4,9 +4,9 @@ on:
   push:
 
 env:
-  C_FLAGS: '/I.\src /std:c99'
-  CPP_FLAGS: '/I.\src /std:c++14'
-  CUDA_FLAGS: '/I.\src /std:c++14'
+  C_FLAGS: '-Isrc -std:c99'
+  CPP_FLAGS: '-Isrc -std:c++14'
+  CUDA_FLAGS: '-Isrc -std:c++14'
 
 jobs:
 
@@ -25,7 +25,7 @@ jobs:
 
       - name: compile main
         run: |
-          cl -c -Isrc main.cpp $env:CPP_FLAGS
+          cl -c main.cpp $env:CPP_FLAGS
 
       - name: link
         run: |
