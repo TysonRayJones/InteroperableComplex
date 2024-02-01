@@ -20,16 +20,12 @@ jobs:
 
       - name: compile backend
         run: |
-          cl -c src/core.cpp $env:CPP_FLAGS
-          cl -c src/alts.cpp $env:CPP_FLAGS
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
-      - name: compile main
+      - name: compile and link main
         run: |
-          cl -c main.cpp ${{ env.CPP_FLAGS }}
-
-      - name: link
-        run: |
-          link main.obj core.obj alts.obj $env:CPP_FLAGS
+          cl /Fe:main.exe main.cpp core.obj alts.obj ${{ env.CPP_FLAGS }}
 
       - name: run main
         run: |
@@ -49,16 +45,16 @@ jobs:
 
       - name: compile backend
         run: |
-          nvcc -c src/core.cu $env:CUDA_FLAGS
-          cl -c src/alts.cpp $env:CPP_FLAGS
+          nvcc -c src/core.cu ${{ env:CUDA_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
         run: |
-          cl -c main.cpp $env:CPP_FLAGS
+          cl -c main.cpp ${{ env.CPP_FLAGS }}
 
       - name: link
         run: |
-          nvcc main.obj core.obj alts.obj $env:CUDA_FLAGS
+          nvcc /Fe:main.exe main.obj core.obj alts.obj ${{ env:CUDA_FLAGS }}
 
   c_cpu:
     name: C (CPU)
@@ -70,12 +66,12 @@ jobs:
 
       - name: compile backend
         run: |
-          cl -c src/core.cpp $env:CPP_FLAGS
-          cl -c src/alts.cpp $env:CPP_FLAGS
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile and link main
         run: |
-          cl main.c core.obj alts.obj $env:C_FLAGS
+          cl /Fe:main.exe main.c core.obj alts.obj ${{ env:C_FLAGS }}
 
       - name: run main
         run: |
@@ -95,13 +91,13 @@ jobs:
 
       - name: compile backend
         run: |
-          nvcc -c src/core.cu $env:CUDA_FLAGS
-          cl -c src/alts.cpp $env:CPP_FLAGS
+          nvcc -c src/core.cu ${{ env:CUDA_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
         run: |
-          cl -c main.c $env:CPP_FLAGS
+          cl -c main.c ${{ env.CPP_FLAGS }}
 
       - name: link
         run: |
-          nvcc main.obj core.obj alts.obj $env:CUDA_FLAGS -o main
+          nvcc /Fe:main.exe main.obj core.obj alts.obj ${{ env:CUDA_FLAGS }}
