@@ -45,13 +45,12 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
         with:
-          cuda: '11.8.0'
           sub-packages: '["nvcc", "visual_studio_integration"]'
           method: 'network'
 
       - name: compile backend
         run: |
-          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} -I${{steps.cuda-toolkit.outputs.CUDA_PATH}}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
@@ -60,7 +59,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{steps.cuda-toolkit.outputs.CUDA_PATH}}
 
   c_cpu:
     name: C (CPU)
@@ -96,7 +95,6 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
         with: 
-          cuda: '11.8.0'
           sub-packages: '["nvcc", "visual_studio_integration"]'
           method: 'network'
 
