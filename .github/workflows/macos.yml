@@ -1,4 +1,4 @@
-name: Linux
+name: MacOS
 
 on:
   push:
@@ -12,19 +12,19 @@ jobs:
 
   cpp_cpu:
     name: C++ (CPU)
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: compile backend
         run: |
-          g++ -c src/core.cpp $CPP_FLAGS -o core.o
-          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/core.cpp $CPP_FLAGS -o core.o
+          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
 
       - name: compile and link main
         run: |
-          g++ main.cpp core.o alts.o $CPP_FLAGS -o main
+          clang++ main.cpp core.o alts.o $CPP_FLAGS -o main
 
       - name: run main
         run: |
@@ -32,7 +32,7 @@ jobs:
 
   cpp_gpu:
     name: C++ (GPU)
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -44,11 +44,11 @@ jobs:
       - name: compile backend
         run: |
           nvcc -c src/core.cu $CUDA_FLAGS -o core.o
-          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
 
       - name: compile main
         run: |
-          g++ -c main.cpp $CPP_FLAGS -o main.o
+          clang++ -c main.cpp $CPP_FLAGS -o main.o
 
       - name: link
         run: |
@@ -56,19 +56,19 @@ jobs:
 
   c_cpu:
     name: C (CPU)
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: compile backend
         run: |
-          g++ -c src/core.cpp $CPP_FLAGS -o core.o
-          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/core.cpp $CPP_FLAGS -o core.o
+          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
 
       - name: compile and link main
         run: |
-          gcc main.c core.o alts.o $C_FLAGS -o main
+          clang main.c core.o alts.o $C_FLAGS -o main
 
       - name: run main
         run: |
@@ -76,7 +76,7 @@ jobs:
 
   c_gpu:
     name: C (GPU)
-    runs-on: ubuntu-latest
+    runs-on: macos-latet
 
     steps:
       - uses: actions/checkout@v4
@@ -88,11 +88,11 @@ jobs:
       - name: compile backend
         run: |
           nvcc -c src/core.cu $CUDA_FLAGS -o core.o
-          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
 
       - name: compile main
         run: |
-          gcc -c main.c $CPP_FLAGS -o main.o
+          clang -c main.c $CPP_FLAGS -o main.o
 
       - name: link
         run: |
