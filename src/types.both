@@ -22,7 +22,7 @@
 
     // pretend that qcomp was the C complex type
     #include <complex.h>
-    typedef double _Complex qcomp;
+    typedef double complex qcomp;
 #endif
 
 
