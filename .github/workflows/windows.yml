@@ -51,6 +51,9 @@ jobs:
       - name: check CUDA path
         run: |
           echo "Cuda install location: ${{steps.cuda-toolkit.outputs.CUDA_PATH}}"
+          echo "${{ env.GITHUB_PATH }}"
+          echo "${{ env.CUDA_PATH }}"
+          echo $env:CUDA_PATH
 
       - name: compile backend
         run: |
