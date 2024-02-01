@@ -44,21 +44,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
+        id: cuda-toolkit
         with:
           sub-packages: '["nvcc", "visual_studio_integration"]'
           method: 'network'
 
       - name: check CUDA according to doc 
         run: |
-          echo "Cuda install location: ${{steps.cuda-toolkit.outputs.CUDA_PATH}}"
-        
-      - name: check CUDA path according to me
-        run: |
-          echo "${{ env.CUDA_PATH }}"
-
-      - name: check CUDA path according to workflow
-        run: |
-          ls $env:CUDA_PATH
+          echo "Cuda install location: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}"
 
       - name: compile backend
         run: |
@@ -71,7 +64,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ env.CUDA_PATH }}\include
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ steps.cuda-toolkit.outputs.CUDA_PATH }}
 
   c_cpu:
     name: C (CPU)
@@ -121,4 +114,4 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ env.CUDA_PATH }}\include
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include
