@@ -22,7 +22,16 @@
 
     // pretend that qcomp was the C complex type
     #include <complex.h>
-    typedef double _Complex qcomp;
+
+    // which is either MSVC's custom C complex
+    #if _MSC_VER
+        typedef _Dcomplex qcomp;
+
+    // or that used by GNU & Clang
+    #else
+        typedef double complex qcomp;
+    #endif
+
 #endif
 
 

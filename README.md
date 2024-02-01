@@ -1,16 +1,30 @@
+A complex type
+=============================
+supported by:
+- `C` and `C++`
+- `GNU` and `Clang` and `MSVC`
+- `CUDA` and `OpenMP` and `MPI`
+- `Linux` and `MacOS` and `Windows`.
+
+
+[![Linux](https://github.com/TysonRayJones/InteroperableComplex/actions/workflows/linux.yml/badge.svg)](https://github.com/TysonRayJones/InteroperableComplex/actions/workflows/linux.yml)
+[![MacOS](https://github.com/TysonRayJones/InteroperableComplex/actions/workflows/macos.yml/badge.svg)](https://github.com/TysonRayJones/InteroperableComplex/actions/workflows/macos.yml)
+[![Windows](https://github.com/TysonRayJones/InteroperableComplex/actions/workflows/windows.yml/badge.svg)](https://github.com/TysonRayJones/InteroperableComplex/actions/workflows/windows.yml)
+
+
 Our goal is to create a `C++` library which handles complex numbers aliased as `qcomp`, which can be used directly by both `C++` and `C` user codes.
 The challenge is that while the `C++` library is compiled with `qcomp = std::complex<double>` (the type provided by `<complex>`), 
-the `C` user's code will understand `qcomp` as a `double complex` (provided by `<complex.h>`).
+the `C` user's code will understand `qcomp` as a `double complex` (or in `MSVC`, a `_Dcomplex`) (provided by `<complex.h>`).
 
 Our requirements are:
 - the library backend and the user codes all use the same type alias; `qcomp`
 - the library backend is always compiled as `C++` by a `C++` compiler
 - the library backend always understands `qcomp` as `std::complex<double>` (regardless of the user's language)
 - a `C++` user can pass `qcomp`'s of underlying type `std::complex<double>` to/from the library
-- a `C` user can pass `qcomp`'s of underlying type `double complex` to/from the library
+- a `C` user can pass `qcomp`'s of underlying type `double complex` (or `_Dcomplex`) to/from the library
 
 This repo contains files:
-- [`src/types.both`](src/types.both) which defines `qcomp = std::complex<double>` (`C++` type) or `qcomp = double complex` (`C` type)
+- [`src/types.both`](src/types.both) which defines `qcomp = std::complex<double>` (`C++` type) or `qcomp = double complex` (`C` type), or  `qcomp = _Dcomplex` (MSVC's `C` type)
 - [`src/core.cpp`](src/core.cpp) which defines all backend functions using strictly `qcomp = std::complex<double>` (`C++` type). It includes all functions which are agnostic to `C` and `C++`, and functions only callable directly by `C++`.
 - [`src/alts.cpp`](src/alts.cpp) defines `C`-compatible wrappers for the functions in `core.cpp` which are only directly callable by `C++`.
 - [`src/core.both`](src/core.both) which declares only compiler-compatible functions to the parsing compiler. It defines `C`-only wrappers of `src/alt.cpp`'s C-compatible wrappers.

@@ -1,0 +1,112 @@
+name: Windows
+
+on:
+  push:
+
+env:
+  # MSVC doesn't support C99, but C++14 has similar conformance
+  C_FLAGS: -Isrc -std:c++14
+
+  # MSVC requires : syntax
+  CPP_FLAGS: -Isrc -std:c++14
+
+  # NVCC requires = syntax (yes, really!)
+  CUDA_FLAGS: -Isrc -std=c++14 -arch=sm_61 -lcudart
+
+jobs:
+
+  cpp_cpu:
+    name: C++ (CPU)
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: compile backend
+        run: |
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+
+      - name: compile and link main
+        run: |
+          cl main.cpp core.obj alts.obj ${{ env.CPP_FLAGS }}
+
+      - name: run main
+        run: |
+          ./main.exe
+
+  cpp_gpu:
+    name: C++ (GPU)
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: Jimver/cuda-toolkit@v0.2.14
+        with:
+          sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
+          method: 'network'
+
+      - name: compile backend
+        run: |
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+
+      - name: compile main
+        run: |
+          cl -c main.cpp ${{ env.CPP_FLAGS }}
+
+      - name: link
+        run: |
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
+
+  c_cpu:
+    name: C (CPU)
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: compile backend
+        run: |
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+
+      - name: compile and link main
+        run: |
+          cl main.c core.obj alts.obj ${{ env.C_FLAGS }}
+
+      - name: arg test
+        run : |
+          echo '${{ env.CPP_FLAGS }}'
+
+      - name: run main
+        run: |
+          ./main.exe
+
+  c_gpu:
+    name: C (GPU)
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: Jimver/cuda-toolkit@v0.2.14
+        with: 
+          sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
+          method: 'network'
+
+      - name: compile backend
+        run: |
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+
+      - name: compile main
+        run: |
+          cl -c main.c ${{ env.CPP_FLAGS }}
+
+      - name: link
+        run: |
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}

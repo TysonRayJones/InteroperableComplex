@@ -9,12 +9,20 @@
 #include "core.both"
 
 int main() {
+    
+    // C MSVC users are cursed
+    #if _MSC_VER
+        qcomp arr[3] = {{0., 1.}, {2., 3.}, {1., 0.}};
+        qcomp x = {1., 1.};
+    #else
+        qcomp arr[3] = {1.i, 2.+3.i, 1.};
+        qcomp x = 1. + 1.i;
+    #endif
 
-    qcomp arr[3] = {1.i, 2.+3.i, 1.};
+    
     double z = myCompArrFunc(arr, 3);
     printf("z = %g\n", z);
 
-    qcomp x = 1. + 1.i;
     double r = myDoubleFunc(x);
     printf("r = %g\n", r);
 
