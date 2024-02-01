@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: compile backend
         run: |
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: compile backend
         run: |
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: Jimver/cuda-toolkit@v0.2.14
         with: 
           sub-packages: '["nvcc"]'
@@ -73,4 +73,4 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.co core.o alts.o $CUDA_FLSGS -o main
+          nvcc main.o core.o alts.o $CUDA_FLSGS -o main
