@@ -18,18 +18,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
 
-      - name: test flags
-        run: |
-          echo $env:CPP_FLAGS
-
       - name: compile backend
         run: |
           cl -c src/core.cpp $env:CPP_FLAGS
           cl -c src/alts.cpp $env:CPP_FLAGS
 
-      - name: compile and link main
+      - name: compile main
         run: |
-          cl main.cpp core.obj alts.obj $env:CPP_FLAGS
+          cl -c main.cpp $env:CPP_FLAGS
+
+      - name: link
+        run: |
+          link main.obj core.obj alts.obj $env:CPP_FLAGS
 
       - name: run main
         run: |
