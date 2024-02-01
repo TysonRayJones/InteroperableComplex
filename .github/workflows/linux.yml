@@ -8,11 +8,15 @@ env:
   CPP_FLAGS: '-Isrc -std=c++14'
   CUDA_FLAGS: '-Isrc -std=c++14'
 
+strategy:
+  matrix:
+    os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
+
 jobs:
 
   cpp_cpu:
     name: C++ (CPU)
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -32,7 +36,7 @@ jobs:
 
   cpp_gpu:
     name: C++ (GPU)
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -56,7 +60,7 @@ jobs:
 
   c_cpu:
     name: C (CPU)
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -76,7 +80,7 @@ jobs:
 
   c_gpu:
     name: C (GPU)
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
