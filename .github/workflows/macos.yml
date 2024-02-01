@@ -30,30 +30,6 @@ jobs:
         run: |
           ./main
 
-  cpp_gpu:
-    name: C++ (GPU)
-    runs-on: macos-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: Jimver/cuda-toolkit@v0.2.14
-        with: 
-          sub-packages: '["nvcc"]'
-          method: 'network'
-
-      - name: compile backend
-        run: |
-          nvcc -c src/core.cu $CUDA_FLAGS -o core.o
-          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
-
-      - name: compile main
-        run: |
-          clang++ -c main.cpp $CPP_FLAGS -o main.o
-
-      - name: link
-        run: |
-          nvcc main.o core.o alts.o $CUDA_FLSGS -o main
-
   c_cpu:
     name: C (CPU)
     runs-on: macos-latest
@@ -73,27 +49,3 @@ jobs:
       - name: run main
         run: |
           ./main
-
-  c_gpu:
-    name: C (GPU)
-    runs-on: macos-latet
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: Jimver/cuda-toolkit@v0.2.14
-        with: 
-          sub-packages: '["nvcc"]'
-          method: 'network'
-
-      - name: compile backend
-        run: |
-          nvcc -c src/core.cu $CUDA_FLAGS -o core.o
-          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
-
-      - name: compile main
-        run: |
-          clang -c main.c $CPP_FLAGS -o main.o
-
-      - name: link
-        run: |
-          nvcc main.o core.o alts.o $CUDA_FLSGS -o main
