@@ -73,11 +73,11 @@ jobs:
 
       - name: checking CUDA vars in another format
         run: |
-          echo "${{join(steps.run_tests.outputs.*, ' ')}}"
+          echo "${{join(steps.cuda-vars.outputs.*, ' ')}}"
 
       - name: compile backend
         run: |
-          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} ${{ steps.cuda-vars.outputs.* }}
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} ${{join(steps.cuda-vars.outputs.*, ' ')}}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
@@ -86,7 +86,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} ${{ steps.cuda-vars.outputs.* }}
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} ${{join(steps.cuda-vars.outputs.*, ' ')}}
 
   c_cpu:
     name: C (CPU)
@@ -121,13 +121,26 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
+        id: cuda-toolkit
         with: 
           sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
           method: 'network'
 
+      - name: saving CUDA vars
+        id: cuda-vars
+        run: |
+          echo '\
+            -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}" \
+            -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\bin" \
+            -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include" \
+            -L"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}" \
+            -L"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\bin" \
+            -L"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include" \
+            ' >> $GITHUB_OUTPUT
+
       - name: compile backend
         run: |
-          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} ${{ steps.cuda-vars.outputs.* }}
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} ${{join(steps.cuda-vars.outputs.*, ' ')}}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
@@ -136,4 +149,4 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} ${{join(steps.cuda-vars.outputs.*, ' ')}}
