@@ -4,9 +4,9 @@ on:
   push:
 
 env:
-  C_FLAGS: '/I\src /std:c99'
-  CPP_FLAGS: '/I\src /std:c++14'
-  CUDA_FLAGS: '/I\src /std:c++14'
+  C_FLAGS: '/I.\src /std:c99'
+  CPP_FLAGS: '/I.\src /std:c++14'
+  CUDA_FLAGS: '/I.\src /std:c++14'
 
 jobs:
 
@@ -29,7 +29,7 @@ jobs:
 
       - name: compile and link main
         run: |
-          cl /I \src main.cpp core.obj alts.obj $env:CPP_FLAGS
+          cl main.cpp core.obj alts.obj $env:CPP_FLAGS
 
       - name: run main
         run: |
