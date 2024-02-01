@@ -49,13 +49,32 @@ jobs:
           sub-packages: '["nvcc", "visual_studio_integration"]'
           method: 'network'
 
-      - name: check CUDA according to doc 
+      - name: checking CUDA installation
         run: |
-          echo "Cuda install location: ${{ steps.cuda-toolkit.outputs.CUDA_PATH }}"
+          ls "${{ steps.cuda-toolkit.outputs.CUDA_PATH }}"
+          ls "${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\bin"
+          ls "${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include"
+
+      - name: saving CUDA vars
+        id: cuda-vars
+        run: |
+          echo '\
+            -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}" \
+            -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\bin" \
+            -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include" \
+            ' >> $GITHUB_OUTPUT
+
+      - name: checking CUDA vars
+        run: |
+          echo "${{ steps.cuda-vars.outputs.* }}"
+
+      - name: checking CUDA vars in another format
+        run: |
+          echo "${{join(steps.run_tests.outputs.*, ' ')}}"
 
       - name: compile backend
         run: |
-          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include"
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} ${{ steps.cuda-vars.outputs.* }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
@@ -64,7 +83,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include"
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} ${{ steps.cuda-vars.outputs.* }}
 
   c_cpu:
     name: C (CPU)
@@ -105,7 +124,7 @@ jobs:
 
       - name: compile backend
         run: |
-          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include"
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }} ${{ steps.cuda-vars.outputs.* }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
@@ -114,4 +133,4 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }} -I"${{ steps.cuda-toolkit.outputs.CUDA_PATH }}\include"
+          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
