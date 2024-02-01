@@ -58,6 +58,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: Jimver/cuda-toolkit@v0.2.14
+        with: 
+          sub-packages: '["nvcc"]'
+          method: 'network'
 
       - name: compile backend
         run: |
