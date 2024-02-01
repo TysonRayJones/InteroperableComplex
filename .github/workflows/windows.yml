@@ -4,15 +4,20 @@ on:
   push:
 
 env:
-  C_FLAGS: -Isrc -std:c99
+  # MSVC doesn't support C99, but C++11 has similar conformance
+  C_FLAGS: -Isrc -std:c++11
+
+  # MSVC requires : syntax
   CPP_FLAGS: -Isrc -std:c++14
-  CUDA_FLAGS: -Isrc -std=c++14
+
+  # NVCC requires = syntax (yes, really!)
+  CUDA_FLAGS: -Isrc -std=c++14 -arch=sm_61
 
 jobs:
 
   cpp_cpu:
     name: C++ (CPU)
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
       - uses: actions/checkout@v4
@@ -33,12 +38,15 @@ jobs:
 
   cpp_gpu:
     name: C++ (GPU)
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
+        with: 
+          sub-packages: '["nvcc", "visual_studio_integration"]'
+          method: 'network'
 
       - name: compile backend
         run: |
@@ -55,7 +63,7 @@ jobs:
 
   c_cpu:
     name: C (CPU)
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
       - uses: actions/checkout@v4
@@ -80,12 +88,15 @@ jobs:
 
   c_gpu:
     name: C (GPU)
-    runs-on: windows-latest
+    runs-on: windows-2019
 
     steps:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
+        with: 
+          sub-packages: '["nvcc", "visual_studio_integration"]'
+          method: 'network'
 
       - name: compile backend
         run: |
