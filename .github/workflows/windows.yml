@@ -25,7 +25,8 @@ jobs:
 
       - name: compile main
         run: |
-          cl -c $env:CPP_FLAGS main.cpp 
+          $using:env:CPP_FLAGS
+          cl -c main.cpp $env:CPP_FLAGS
 
       - name: link
         run: |
