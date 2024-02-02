@@ -23,7 +23,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
 
       - name: compile backend
         run: |
@@ -45,7 +44,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
         with:
           sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
@@ -71,18 +69,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
       - uses: mpi4py/setup-mpi@v1
 
       - name: compile backend
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
-          mpicc -c src/comm.cpp ${{ env.MPI_FLAGS }}
+          mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
 
       - name: compile and link main
         run: |
-          mpicc main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
+          mpicxx main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
 
       - name: run main
         run: |
@@ -95,7 +92,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
 
       - name: compile backend
         run: |
@@ -117,7 +113,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
       - uses: Jimver/cuda-toolkit@v0.2.14
         with: 
           sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
@@ -143,14 +138,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
       - uses: mpi4py/setup-mpi@v1
 
       - name: compile backend
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
-          mpicc -c src/comm.cpp ${{ env.MPI_FLAGS }}
+          mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
 
       - name: compile and link main
         run: |
