@@ -1,4 +1,4 @@
-A complex type
+A Complex Type
 =============================
 supported by:
 - `C` and `C++`
