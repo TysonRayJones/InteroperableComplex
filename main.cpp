@@ -6,7 +6,9 @@
  */
 
 #include <stdio.h>
+
 #include "core.both"
+#include "comm.both"
 
 int main() {
 
@@ -20,6 +22,8 @@ int main() {
 
     qcomp y = myCompFunc(x);
     printf("y = %g + i(%g)\n", real(y), imag(y));
+
+    myCommFunc(arr, 3);
 
     return 0;
 }
