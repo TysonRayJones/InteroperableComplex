@@ -1,6 +1,6 @@
 /*
  * This C/C++ file is the communication header. It is parsed by a 
- * C++ compiler when compiling core.cpp, but it is also parsed 
+ * C++ compiler when compiling multi.cpp, but it is also parsed 
  * by a C compiler when compiling user's C code. As such, the
  * referred 'qcomp' type is assumed to be the compiler's native
  * complex type.
