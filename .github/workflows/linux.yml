@@ -207,7 +207,7 @@ jobs:
         run: |
           nvcc main.o core.o alts.o comm.o multi.o $CPP_FLAGS $CUDA_FLAGS -o main
 
-  cpp_mpi:
+  cpp_mpi_multi:
     name: C++ (MPI) (OpenMP)
     runs-on: ubuntu-latest
 
@@ -232,7 +232,7 @@ jobs:
           mpiexec -n 2 ./main
 
 
-  c_cpu:
+  c_cpu_multi:
     name: C (CPU) (OpenMP)
     runs-on: ubuntu-latest
 
@@ -255,7 +255,7 @@ jobs:
           export OMP_NUM_THREADS=2
           ./main
 
-  c_gpu:
+  c_gpu_multi:
     name: C (GPU) (OpenMP)
     runs-on: ubuntu-latest
 
@@ -281,7 +281,7 @@ jobs:
         run: |
           nvcc main.o core.o alts.o comm.o multi.o $CPP_FLAGS $CUDA_FLAGS -o main
 
-  c_mpi:
+  c_mpi_multi:
     name: C (MPI) (OpenMP)
     runs-on: ubuntu-latest
 
