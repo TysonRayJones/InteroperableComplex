@@ -1,8 +1,8 @@
 # terminate upon error
 set -e
 
-cflags='-Isrc -std=c99 -lstdc++ -Wall'
-cppflags='-Isrc -std=c++14 -Wall'
+cflags='-Isrc -std=c99 -lstdc++ -Wall -Xclang -fopenmp -lomp'
+cppflags='-Isrc -std=c++14 -Wall -Xclang -fopenmp -lomp'
 cudaflags='-Isrc -std=c++14 -arch=sm_61 -Wall'
 
 

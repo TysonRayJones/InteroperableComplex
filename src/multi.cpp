@@ -40,20 +40,21 @@ extern "C" void myMultiFunc() {
 
 #ifdef _OPENMP
 
-    auto start = chrono::high_resolution_clock::now();
+    start = std::chrono::high_resolution_clock::now();
 
-    #pragma omp parallel
-    int numThreads = omp_get_num_threads();
+    int numThreads;
+    #pragma omp parallel shared(numThreads)
+    numThreads = omp_get_num_threads();
 
-    qcomp sum = 0;
+    sum = 0;
 
     #pragma omp parallel for reduction(+:sum)
     for (int i=0; i<len; i++)
         sum += arr[i];
 
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "multithreaded (" << numThreads << " threads) duration (ms): " << dur.count() < std::endl;
+    stop = std::chrono::high_resolution_clock::now();
+    dur = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "multithreaded (" << numThreads << " threads) duration (ms): " << dur.count() << std::endl;
 
 #else
 

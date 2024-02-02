@@ -9,7 +9,8 @@ env:
 
   CUDA_FLAGS: ''
   MPI_FLAGS: '-DDISTRIBUTED_MODE'
-  OPENMP_FLAGS: '-fopenmp'
+  OPENMP_COMP_FLAGS: '-Xclang -fopenmp'
+  OPENMP_LINK_FLAGS: '-lomp'
 
 jobs:
 
@@ -26,7 +27,7 @@ jobs:
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
           clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           clang++ -c src/comm.cpp $CPP_FLAGS -o comm.o
-          clang++ -c src/multi.cpp $CPP_FLAGS $OPENMP_FLAGS -o multi.o
+          clang++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile and link main
         run: |
@@ -103,4 +104,100 @@ jobs:
 
       - name: run main
         run: |
+          mpiexec -np 2 ./main
+
+
+  cpp_cpu_multi:
+    name: C++ (CPU) (OpenMP)
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: compile backend
+        run: |
+          clang++ -c src/core.cpp $CPP_FLAGS -o core.o
+          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          clang++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+
+      - name: compile and link main
+        run: |
+          clang++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS $OPENMP_LINK_FLAGS -o main
+
+      - name: run main
+        run: |
+          export OMP_NUM_THREADS=2
+          ./main
+
+  cpp_mpi_multi:
+    name: C++ (MPI) (OpenMP)
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mpi4py/setup-mpi@v1
+
+      - name: compile backend
+        run: |
+          clang++ -c src/core.cpp $CPP_FLAGS -o core.o
+          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+          mpic++ -c src/comm.cpp $CPP_FLAGS $MPI_FLAGS -o comm.o
+
+      - name: compile and link main
+        run: |
+          mpic++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS $OPENMP_LINK_FLAGS -o main
+
+      - name: run main
+        run: |
+          export OMP_NUM_THREADS=2
+          mpiexec -n 2 ./main
+
+
+  c_cpu_multi:
+    name: C (CPU) (OpenMP)
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: compile backend
+        run: |
+          clang++ -c src/core.cpp $CPP_FLAGS -o core.o
+          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          clang++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+
+      - name: compile and link main
+        run: |
+          clang main.c core.o alts.o comm.o multi.o $C_FLAGS $OPENMP_LINK_FLAGS -o main
+
+      - name: run main
+        run: |
+          export OMP_NUM_THREADS=2
+          ./main
+
+  c_mpi_multi:
+    name: C (MPI) (OpenMP)
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mpi4py/setup-mpi@v1
+
+      - name: compile backend
+        run: |
+          clang++ -c src/core.cpp $CPP_FLAGS -o core.o
+          clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+          mpic++ -c src/comm.cpp $CPP_FLAGS $MPI_FLAGS -o comm.o
+
+      - name: compile and link main
+        run: |
+          mpicc main.c core.o alts.o comm.o multi.o $C_FLAGS $OPENMP_LINK_FLAGS -o main
+
+      - name: run main
+        run: |
+          export OMP_NUM_THREADS=2
           mpiexec -np 2 ./main

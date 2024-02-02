@@ -30,11 +30,11 @@ jobs:
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
           cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
-          cl -c src/multi.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }} -openmp
 
       - name: compile and link main
         run: |
-          cl main.cpp core.obj alts.obj comm.obj multi.obj ${{ env.CPP_FLAGS }}
+          cl main.cpp core.obj alts.obj comm.obj multi.obj ${{ env.CPP_FLAGS }} -openmp
 
       - name: run main
         run: |
@@ -57,7 +57,7 @@ jobs:
           nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
           cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
-          cl -c src/multi.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }} -openmp
 
       - name: compile main
         run: |
