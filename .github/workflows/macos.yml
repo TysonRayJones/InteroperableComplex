@@ -24,10 +24,11 @@ jobs:
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
           clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           clang++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          clang++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile and link main
         run: |
-          clang++ main.cpp core.o alts.o comm.o $CPP_FLAGS -o main
+          clang++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS -o main
 
       - name: run main
         run: |
@@ -45,11 +46,12 @@ jobs:
         run: |
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
           clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/multi.cpp $CPP_FLAGS -o multi.o
           mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
-          mpic++ main.cpp core.o alts.o comm.o $CPP_FLAGS -o main
+          mpic++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS -o main
 
       - name: run main
         run: |
@@ -68,10 +70,11 @@ jobs:
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
           clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           clang++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          clang++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile and link main
         run: |
-          clang main.c core.o alts.o comm.o $C_FLAGS -o main
+          clang main.c core.o alts.o comm.o multi.o $C_FLAGS -o main
 
       - name: run main
         run: |
@@ -89,11 +92,12 @@ jobs:
         run: |
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
           clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          clang++ -c src/multi.cpp $CPP_FLAGS -o multi.o
           mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
-          mpicc main.c core.o alts.o comm.o $C_FLAGS -o main
+          mpicc main.c core.o alts.o comm.o multi.o $C_FLAGS -o main
 
       - name: run main
         run: |

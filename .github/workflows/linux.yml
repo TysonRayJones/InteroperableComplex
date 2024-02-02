@@ -24,10 +24,11 @@ jobs:
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile and link main
         run: |
-          g++ main.cpp core.o alts.o comm.o $CPP_FLAGS -o main
+          g++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS -o main
 
       - name: run main
         run: |
@@ -49,6 +50,7 @@ jobs:
           nvcc -c src/core.cu $CUDA_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile main
         run: |
@@ -56,7 +58,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.o core.o alts.o comm.o $CUDA_FLAGS -o main
+          nvcc main.o core.o alts.o comm.o multi.o $CUDA_FLAGS -o main
 
   cpp_mpi:
     name: C++ (MPI)
@@ -70,11 +72,12 @@ jobs:
         run: |
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
           mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
-          mpic++ main.cpp core.o alts.o comm.o $CPP_FLAGS -o main
+          mpic++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS -o main
 
       - name: run main
         run: |
@@ -93,10 +96,11 @@ jobs:
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile and link main
         run: |
-          gcc main.c core.o alts.o comm.o $C_FLAGS -o main
+          gcc main.c core.o alts.o comm.o multi.o $C_FLAGS -o main
 
       - name: run main
         run: |
@@ -118,6 +122,7 @@ jobs:
           nvcc -c src/core.cu $CUDA_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile main
         run: |
@@ -125,7 +130,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.o core.o alts.o comm.o $CUDA_FLAGS -o main
+          nvcc main.o core.o alts.o comm.o multi.o $CUDA_FLAGS -o main
 
   c_mpi:
     name: C (MPI)
@@ -139,11 +144,12 @@ jobs:
         run: |
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
           mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
-          mpicc main.c core.o alts.o comm.o $C_FLAGS -o main
+          mpicc main.c core.o alts.o comm.o multi.o $C_FLAGS -o main
 
       - name: run main
         run: |
