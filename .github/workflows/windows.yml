@@ -162,4 +162,4 @@ jobs:
 
       - name: run main
         run: |
-          mpirun -np 2 ./main.exe
+          mpiexec -np 2 ./main.exe
