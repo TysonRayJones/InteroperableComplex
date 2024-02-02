@@ -9,6 +9,7 @@
 
 #include "core.both"
 #include "comm.both"
+#include "multi.both"
 
 int main() {
     
@@ -31,6 +32,8 @@ int main() {
     printf("y = %g + i(%g)\n", creal(y), cimag(y));
 
     myCommFunc(arr, 3);
+
+    myMultiFunc();
 
     return 0;
 }

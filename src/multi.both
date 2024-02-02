@@ -1,0 +1,20 @@
+
+
+#ifndef MULTI_HPP
+#define MULTI_HPP
+
+#include "types.both"
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    void myMultiFunc();
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif // MULTI_HPP
