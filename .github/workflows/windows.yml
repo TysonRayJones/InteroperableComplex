@@ -65,6 +65,29 @@ jobs:
         run: |
           nvcc -o main.exe main.obj core.obj alts.obj comm.obj ${{ env.CUDA_FLAGS }}
 
+  cpp_mpi:
+    name: C++ (MPI)
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: mpi4py/setup-mpi@v1
+
+      - name: compile backend
+        run: |
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          mpic++ -c src/comm.cpp ${{ env.MPI_FLAGS }}
+
+      - name: compile and link main
+        run: |
+          mpic++ main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
+
+      - name: run main
+        run: |
+          mpiexec -np 2 ./main.exe
+
 
   c_cpu:
     name: C (CPU)
@@ -82,11 +105,7 @@ jobs:
 
       - name: compile and link main
         run: |
-          cl main.c core.obj alts.obj comm.o ${{ env.C_FLAGS }}
-
-      - name: arg test
-        run : |
-          echo '${{ env.CPP_FLAGS }}'
+          cl main.c core.obj alts.obj comm.obj ${{ env.C_FLAGS }}
 
       - name: run main
         run: |
@@ -116,4 +135,27 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj comm.o ${{ env.CUDA_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj comm.obj ${{ env.CUDA_FLAGS }}
+
+  c_mpi:
+    name: C (MPI)
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: mpi4py/setup-mpi@v1
+
+      - name: compile backend
+        run: |
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          mpic++ -c src/comm.cpp ${{ env.MPI_FLAGS }}
+
+      - name: compile and link main
+        run: |
+          mpicc main.c core.obj alts.obj comm.obj ${{ env.C_FLAGS }}
+
+      - name: run main
+        run: |
+          mpirun -np 2 ./main.exe
