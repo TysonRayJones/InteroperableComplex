@@ -16,6 +16,7 @@ env:
   MPI_FLAGS: '-Isrc -std=c++14 -DDISTRIBUTED_MODE'
 
   OPENMP_FLAGS: '-openmp'
+  CUDA_OPENMP_LINK_FLAGS: '-lgomp'
 
 jobs:
 
@@ -222,7 +223,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj comm.obj multi.obj ${{ env.CUDA_FLAGS }} ${{ env.OPENMP_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj comm.obj multi.obj ${{ env.CUDA_FLAGS }} ${{ env.CUDA_OPENMP_LINK_FLAGS }}
 
   cpp_mpi_multi:
     name: C++ (MPI) (OpenMP)
@@ -301,7 +302,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj comm.obj multi.obj ${{ env.CUDA_FLAGS }} ${{ env.OPENMP_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj comm.obj multi.obj ${{ env.CUDA_FLAGS }} ${{ env.CUDA_OPENMP_LINK_FLAGS }}
 
   c_mpi_multi:
     name: C (MPI) (OpenMP)

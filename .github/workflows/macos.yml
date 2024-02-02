@@ -19,11 +19,6 @@ jobs:
     name: C++ (CPU)
     runs-on: macos-latest
 
-
-    continue-on-error: true
-
-    
-
     steps:
       - uses: actions/checkout@v4
 
@@ -125,13 +120,11 @@ jobs:
 
       - name: find libomp
         run: |
-          ls /opt/local/include/libomp
-          cat /opt/local/include/libomp/omp.h 
+          echo $(brew --prefix libomp)
 
-      - name: try to move libomp
+      - name: try to tell openmp where to find libomp
         run: |
-          cp /opt/local/include/libomp/omp.h /opt/local/include/omp.h
-          cp /usr/local/opt/libomp/include/omp.h /opt/local/include/omp.h
+          export OMP_PREFIX=$(brew --prefix libomp)
 
       - name: compile backend
         run: |
