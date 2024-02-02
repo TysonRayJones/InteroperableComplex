@@ -19,7 +19,7 @@ jobs:
 
   cpp_cpu:
     name: C++ (CPU)
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
 
   cpp_gpu:
     name: C++ (GPU)
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -67,7 +67,7 @@ jobs:
 
   cpp_mpi:
     name: C++ (MPI)
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -91,7 +91,7 @@ jobs:
 
   c_cpu:
     name: C (CPU)
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -113,7 +113,7 @@ jobs:
 
   c_gpu:
     name: C (GPU)
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -139,7 +139,7 @@ jobs:
 
   c_mpi:
     name: C (MPI)
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
