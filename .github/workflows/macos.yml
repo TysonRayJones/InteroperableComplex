@@ -114,6 +114,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: prepare libomp
+        run: |
+          brew install libomp
+
       - name: compile backend
         run: |
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
@@ -137,6 +141,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: mpi4py/setup-mpi@v1
+
+      - name: prepare libomp
+        run: |
+          brew install libomp
 
       - name: compile backend
         run: |
@@ -162,6 +170,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: prepare libomp
+        run: |
+          brew install libomp
+
       - name: compile backend
         run: |
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
@@ -185,6 +197,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: mpi4py/setup-mpi@v1
+
+      - name: prepare libomp
+        run: |
+          brew install libomp
 
       - name: compile backend
         run: |
