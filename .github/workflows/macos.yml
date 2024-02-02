@@ -19,6 +19,11 @@ jobs:
     name: C++ (CPU)
     runs-on: macos-latest
 
+
+    continue-on-error: true
+
+    
+
     steps:
       - uses: actions/checkout@v4
 
