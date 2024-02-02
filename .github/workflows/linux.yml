@@ -4,11 +4,13 @@ on:
   push:
 
 env:
-  C_FLAGS: '-Isrc -std=c99'
+  C_FLAGS: '-Isrc -std=c99 -lstdc++'
   CPP_FLAGS: '-Isrc -std=c++14'
   CUDA_FLAGS: '-Isrc -std=c++14'
+  MPI_FLAGS: '-Isrc -std=c++14 -DDISTRIBUTED_MODE'
 
 jobs:
+
 
   cpp_cpu:
     name: C++ (CPU)
@@ -21,10 +23,11 @@ jobs:
         run: |
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
-          g++ main.cpp core.o alts.o $CPP_FLAGS -o main
+          g++ main.cpp core.o alts.o comm.o $CPP_FLAGS -o main
 
       - name: run main
         run: |
@@ -45,6 +48,7 @@ jobs:
         run: |
           nvcc -c src/core.cu $CUDA_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
 
       - name: compile main
         run: |
@@ -52,7 +56,30 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.o core.o alts.o $CUDA_FLAGS -o main
+          nvcc main.o core.o alts.o comm.o $CUDA_FLAGS -o main
+
+  cpp_mpi:
+    name: C++ (MPI)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mpi4py/setup-mpi@v1
+
+      - name: compile backend
+        run: |
+          g++ -c src/core.cpp $CPP_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
+
+      - name: compile and link main
+        run: |
+          mpic++ main.cpp core.o alts.o comm.o $CPP_FLAGS -o main
+
+      - name: run main
+        run: |
+          mpiexec -n 2 ./main
+
 
   c_cpu:
     name: C (CPU)
@@ -65,10 +92,11 @@ jobs:
         run: |
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
-          gcc main.c core.o alts.o $C_FLAGS -o main
+          gcc main.c core.o alts.o comm.o $C_FLAGS -o main
 
       - name: run main
         run: |
@@ -89,6 +117,7 @@ jobs:
         run: |
           nvcc -c src/core.cu $CUDA_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
 
       - name: compile main
         run: |
@@ -96,4 +125,25 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.o core.o alts.o $CUDA_FLAGS -o main
+          nvcc main.o core.o alts.o comm.o $CUDA_FLAGS -o main
+
+  c_mpi:
+    name: C (MPI)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: compile backend
+        run: |
+          g++ -c src/core.cpp $CPP_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
+
+      - name: compile and link main
+        run: |
+          mpicc main.c core.o alts.o comm.o $C_FLAGS -o main
+
+      - name: run main
+        run: |
+          mpiexec -np 2 ./main
