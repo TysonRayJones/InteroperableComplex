@@ -6,8 +6,9 @@ on:
 env:
   C_FLAGS: '-Isrc -std=c99 -lstdc++'
   CPP_FLAGS: '-Isrc -std=c++14'
-  CUDA_FLAGS: '-Isrc -std=c++14'
-  MPI_FLAGS: '-Isrc -std=c++14 -DDISTRIBUTED_MODE'
+
+  CUDA_FLAGS: ''
+  MPI_FLAGS: '-DDISTRIBUTED_MODE'
 
 jobs:
 
@@ -47,7 +48,7 @@ jobs:
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
           clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           clang++ -c src/multi.cpp $CPP_FLAGS -o multi.o
-          mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
+          mpic++ -c src/comm.cpp $CPP_FLAGS $MPI_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
@@ -93,7 +94,7 @@ jobs:
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
           clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           clang++ -c src/multi.cpp $CPP_FLAGS -o multi.o
-          mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
+          mpic++ -c src/comm.cpp $CPP_FLAGS $MPI_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
