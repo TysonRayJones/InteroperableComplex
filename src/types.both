@@ -7,6 +7,9 @@
 #define TYPES_HPP
 
 
+#define MPI_QCOMP MPI_DOUBLE_COMPLEX
+
+
 // when C++ parses this header, during C++ backend compilation, or during compilation of C++ user code...
 #ifdef __cplusplus
 

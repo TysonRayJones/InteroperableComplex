@@ -1,0 +1,30 @@
+/*
+ * This C/C++ file is the communication header. It is parsed by a 
+ * C++ compiler when compiling core.cpp, but it is also parsed 
+ * by a C compiler when compiling user's C code. As such, the
+ * referred 'qcomp' type is assumed to be the compiler's native
+ * complex type.
+ */
+
+#ifndef COMM_HPP
+#define COMM_HPP
+
+#include "types.both"
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    // if this was a strictly C++ signature, we
+    // would make it an internal function and
+    // expose it (with a C) wrapper in core.both.
+    // But pointers to qcomp are fine.
+    void myCommFunc(qcomp* arr, int len);
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif // COMM_HPP
