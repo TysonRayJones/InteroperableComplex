@@ -10,7 +10,7 @@ env:
   CUDA_FLAGS: ''
   MPI_FLAGS: '-DDISTRIBUTED_MODE'
   OPENMP_COMP_FLAGS: '-fopenmp'
-  OPENMP_LINK_FLAGS: ''
+  OPENMP_LINK_FLAGS: '-fopenmp'
 
 jobs:
 
