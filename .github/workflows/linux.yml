@@ -6,8 +6,12 @@ on:
 env:
   C_FLAGS: '-Isrc -std=c99 -lstdc++'
   CPP_FLAGS: '-Isrc -std=c++14'
-  CUDA_FLAGS: '-Isrc -std=c++14'
-  MPI_FLAGS: '-Isrc -std=c++14 -DDISTRIBUTED_MODE'
+
+  CUDA_FLAGS: ''
+  MPI_FLAGS: '-DDISTRIBUTED_MODE'
+  OPENMP_COMP_FLAGS: '-fopenmp'
+  OPENMP_LINK_FLAGS: '-fopenmp'
+  CUDA_OPENMP_LINK_FLAGS: '-lgomp'
 
 jobs:
 
@@ -24,10 +28,11 @@ jobs:
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile and link main
         run: |
-          g++ main.cpp core.o alts.o comm.o $CPP_FLAGS -o main
+          g++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS -o main
 
       - name: run main
         run: |
@@ -46,9 +51,10 @@ jobs:
 
       - name: compile backend
         run: |
-          nvcc -c src/core.cu $CUDA_FLAGS -o core.o
+          nvcc -c src/core.cu $CPP_FLAGS $CUDA_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile main
         run: |
@@ -56,7 +62,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.o core.o alts.o comm.o $CUDA_FLAGS -o main
+          nvcc main.o core.o alts.o comm.o multi.o $CPP_FLAGS $CUDA_FLAGS -o main
 
   cpp_mpi:
     name: C++ (MPI)
@@ -70,11 +76,12 @@ jobs:
         run: |
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
-          mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
+          mpic++ -c src/comm.cpp $CPP_FLAGS $MPI_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
-          mpic++ main.cpp core.o alts.o comm.o $CPP_FLAGS -o main
+          mpic++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS -o main
 
       - name: run main
         run: |
@@ -93,10 +100,11 @@ jobs:
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile and link main
         run: |
-          gcc main.c core.o alts.o comm.o $C_FLAGS -o main
+          gcc main.c core.o alts.o comm.o multi.o $C_FLAGS -o main
 
       - name: run main
         run: |
@@ -115,9 +123,10 @@ jobs:
 
       - name: compile backend
         run: |
-          nvcc -c src/core.cu $CUDA_FLAGS -o core.o
+          nvcc -c src/core.cu $CPP_FLAGS $CUDA_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
 
       - name: compile main
         run: |
@@ -125,7 +134,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc main.o core.o alts.o comm.o $CUDA_FLAGS -o main
+          nvcc main.o core.o alts.o comm.o multi.o $CPP_FLAGS $CUDA_FLAGS -o main
 
   c_mpi:
     name: C (MPI)
@@ -139,12 +148,161 @@ jobs:
         run: |
           g++ -c src/core.cpp $CPP_FLAGS -o core.o
           g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
-          mpic++ -c src/comm.cpp $MPI_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS -o multi.o
+          mpic++ -c src/comm.cpp $CPP_FLAGS $MPI_FLAGS -o comm.o
 
       - name: compile and link main
         run: |
-          mpicc main.c core.o alts.o comm.o $C_FLAGS -o main
+          mpicc main.c core.o alts.o comm.o multi.o $C_FLAGS -o main
 
       - name: run main
         run: |
+          mpiexec -np 2 ./main
+
+
+  cpp_cpu_multi:
+    name: C++ (CPU) (OpenMP)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: compile backend
+        run: |
+          g++ -c src/core.cpp $CPP_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+
+      - name: compile and link main
+        run: |
+          g++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS $OPENMP_LINK_FLAGS -o main
+
+      - name: run main
+        run: |
+          export OMP_NUM_THREADS=2
+          ./main
+
+  cpp_gpu_multi:
+    name: C++ (GPU) (OpenMP)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Jimver/cuda-toolkit@v0.2.14
+        with: 
+          sub-packages: '["nvcc"]'
+          method: 'network'
+
+      - name: compile backend
+        run: |
+          nvcc -c src/core.cu $CPP_FLAGS $CUDA_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+
+      - name: compile main
+        run: |
+          g++ -c main.cpp $CPP_FLAGS -o main.o
+
+      - name: link
+        run: |
+          nvcc main.o core.o alts.o comm.o multi.o $CPP_FLAGS $CUDA_FLAGS $CUDA_OPENMP_LINK_FLAGS -o main
+
+  cpp_mpi_multi:
+    name: C++ (MPI) (OpenMP)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mpi4py/setup-mpi@v1
+
+      - name: compile backend
+        run: |
+          g++ -c src/core.cpp $CPP_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+          mpic++ -c src/comm.cpp $CPP_FLAGS $MPI_FLAGS -o comm.o
+
+      - name: compile and link main
+        run: |
+          mpic++ main.cpp core.o alts.o comm.o multi.o $CPP_FLAGS $OPENMP_LINK_FLAGS -o main
+
+      - name: run main
+        run: |
+          export OMP_NUM_THREADS=2
+          mpiexec -n 2 ./main
+
+
+  c_cpu_multi:
+    name: C (CPU) (OpenMP)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: compile backend
+        run: |
+          g++ -c src/core.cpp $CPP_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+
+      - name: compile and link main
+        run: |
+          gcc main.c core.o alts.o comm.o multi.o $C_FLAGS $OPENMP_LINK_FLAGS -o main
+
+      - name: run main
+        run: |
+          export OMP_NUM_THREADS=2
+          ./main
+
+  c_gpu_multi:
+    name: C (GPU) (OpenMP)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Jimver/cuda-toolkit@v0.2.14
+        with: 
+          sub-packages: '["nvcc"]'
+          method: 'network'
+
+      - name: compile backend
+        run: |
+          nvcc -c src/core.cu $CPP_FLAGS $CUDA_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/comm.cpp $CPP_FLAGS -o comm.o
+          g++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+
+      - name: compile main
+        run: |
+          gcc -c main.c $CPP_FLAGS -o main.o
+
+      - name: link
+        run: |
+          nvcc main.o core.o alts.o comm.o multi.o $CPP_FLAGS $CUDA_FLAGS $CUDA_OPENMP_LINK_FLAGS -o main
+
+  c_mpi_multi:
+    name: C (MPI) (OpenMP)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mpi4py/setup-mpi@v1
+
+      - name: compile backend
+        run: |
+          g++ -c src/core.cpp $CPP_FLAGS -o core.o
+          g++ -c src/alts.cpp $CPP_FLAGS -o alts.o
+          g++ -c src/multi.cpp $CPP_FLAGS $OPENMP_COMP_FLAGS -o multi.o
+          mpic++ -c src/comm.cpp $CPP_FLAGS $MPI_FLAGS -o comm.o
+
+      - name: compile and link main
+        run: |
+          mpicc main.c core.o alts.o comm.o multi.o $C_FLAGS $OPENMP_LINK_FLAGS -o main
+
+      - name: run main
+        run: |
+          export OMP_NUM_THREADS=2
           mpiexec -np 2 ./main

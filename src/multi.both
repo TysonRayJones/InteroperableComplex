@@ -1,0 +1,24 @@
+/*
+ * This C/C++ file is the multithreading header. It is parsed by a 
+ * C++ compiler when compiling multi.cpp, but it is also parsed 
+ * by a C compiler when compiling user's C code.
+ */
+
+#ifndef MULTI_HPP
+#define MULTI_HPP
+
+#include "types.both"
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    void myMultiFunc();
+
+#ifdef __cplusplus
+}
+#endif
+
+
+#endif // MULTI_HPP

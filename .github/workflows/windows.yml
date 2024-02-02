@@ -15,6 +15,9 @@ env:
 
   MPI_FLAGS: '-Isrc -std=c++14 -DDISTRIBUTED_MODE'
 
+  OPENMP_FLAGS: '-openmp'
+  CUDA_OPENMP_LINK_FLAGS: '-Xcompiler -openmp'
+
 jobs:
 
   cpp_cpu:
@@ -30,10 +33,11 @@ jobs:
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
           cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile and link main
         run: |
-          cl main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
+          cl main.cpp core.obj alts.obj comm.obj multi.obj ${{ env.CPP_FLAGS }}
 
       - name: run main
         run: |
@@ -56,6 +60,7 @@ jobs:
           nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
           cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
         run: |
@@ -63,7 +68,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj comm.obj ${{ env.CUDA_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj comm.obj multi.obj ${{ env.CUDA_FLAGS }}
 
   cpp_mpi:
     name: C++ (MPI)
@@ -80,11 +85,12 @@ jobs:
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }}
           mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
 
       - name: compile and link main
         run: |
-          mpicxx main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
+          mpicxx main.cpp core.obj alts.obj comm.obj multi.obj ${{ env.CPP_FLAGS }}
 
       - name: run main
         run: |
@@ -104,10 +110,11 @@ jobs:
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
           cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile and link main
         run: |
-          cl main.c core.obj alts.obj comm.obj ${{ env.C_FLAGS }}
+          cl main.c core.obj alts.obj comm.obj multi.obj ${{ env.C_FLAGS }}
 
       - name: run main
         run: |
@@ -130,6 +137,7 @@ jobs:
           nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
           cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
         run: |
@@ -137,7 +145,7 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj comm.obj ${{ env.CUDA_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj comm.obj multi.obj ${{ env.CUDA_FLAGS }}
 
   c_mpi:
     name: C (MPI)
@@ -154,12 +162,171 @@ jobs:
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }}
           mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
 
       - name: compile and link main
         run: |
-          mpicc main.c core.obj alts.obj comm.obj ${{ env.C_FLAGS }}
+          mpicc main.c core.obj alts.obj comm.obj multi.obj ${{ env.C_FLAGS }}
 
       - name: run main
         run: |
+          mpiexec -np 2 ./main.exe
+
+
+  cpp_cpu_multi:
+    name: C++ (CPU) (OpenMP)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: compile backend
+        run: |
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }} ${{ env.OPENMP_FLAGS }}
+
+      - name: compile and link main
+        run: |
+          cl main.cpp core.obj alts.obj comm.obj multi.obj ${{ env.CPP_FLAGS }} ${{ env.OPENMP_FLAGS }}
+
+      - name: run main
+        run: |
+          set OMP_NUM_THREADS=2
+          ./main.exe
+
+  cpp_gpu_multi:
+    name: C++ (GPU) (OpenMP)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: Jimver/cuda-toolkit@v0.2.14
+        with:
+          sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
+          method: 'network'
+
+      - name: compile backend
+        run: |
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }} ${{ env.OPENMP_FLAGS }}
+
+      - name: compile main
+        run: |
+          cl -c main.cpp ${{ env.CPP_FLAGS }}
+
+      - name: link
+        run: |
+          nvcc -o main.exe main.obj core.obj alts.obj comm.obj multi.obj ${{ env.CUDA_FLAGS }} ${{ env.CUDA_OPENMP_LINK_FLAGS }}
+
+  cpp_mpi_multi:
+    name: C++ (MPI) (OpenMP)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: mpi4py/setup-mpi@v1
+        with:
+          mpi: 'intelmpi'
+
+      - name: compile backend
+        run: |
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }} ${{ env.OPENMP_FLAGS }}
+          mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
+
+      - name: compile and link main
+        run: |
+          mpicxx main.cpp core.obj alts.obj comm.obj multi.obj ${{ env.CPP_FLAGS }} ${{ env.OPENMP_FLAGS }}
+
+      - name: run main
+        run: |
+          set OMP_NUM_THREADS=2
+          mpiexec -np 2 ./main.exe
+
+
+  c_cpu_multi:
+    name: C (CPU) (OpenMP)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: compile backend
+        run: |
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }} ${{ env.OPENMP_FLAGS }}
+
+      - name: compile and link main
+        run: |
+          cl main.c core.obj alts.obj comm.obj multi.obj ${{ env.C_FLAGS }} ${{ env.OPENMP_FLAGS }}
+
+      - name: run main
+        run: |
+          set OMP_NUM_THREADS=2
+          ./main.exe
+
+  c_gpu_multi:
+    name: C (GPU) (OpenMP)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: Jimver/cuda-toolkit@v0.2.14
+        with: 
+          sub-packages: '["nvcc", "cudart", "visual_studio_integration"]'
+          method: 'network'
+
+      - name: compile backend
+        run: |
+          nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }} ${{ env.OPENMP_FLAGS }}
+
+      - name: compile main
+        run: |
+          cl -c main.c ${{ env.CPP_FLAGS }}
+
+      - name: link
+        run: |
+          nvcc -o main.exe main.obj core.obj alts.obj comm.obj multi.obj ${{ env.CUDA_FLAGS }} ${{ env.CUDA_OPENMP_LINK_FLAGS }}
+
+  c_mpi_multi:
+    name: C (MPI) (OpenMP)
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+      - uses: mpi4py/setup-mpi@v1
+        with:
+          mpi: 'intelmpi'
+
+      - name: compile backend
+        run: |
+          cl -c src/core.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/multi.cpp ${{ env.CPP_FLAGS }} ${{ env.OPENMP_FLAGS }}
+          mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
+
+      - name: compile and link main
+        run: |
+          mpicc main.c core.obj alts.obj comm.obj multi.obj ${{ env.C_FLAGS }} ${{ env.OPENMP_FLAGS }}
+
+      - name: run main
+        run: |
+          set OMP_NUM_THREADS=2
           mpiexec -np 2 ./main.exe
