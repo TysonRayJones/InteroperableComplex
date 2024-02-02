@@ -9,8 +9,8 @@ env:
 
   CUDA_FLAGS: ''
   MPI_FLAGS: '-DDISTRIBUTED_MODE'
-  OPENMP_COMP_FLAGS: '-Xclang -fopenmp -I$(brew --prefix libomp)/include'
-  OPENMP_LINK_FLAGS: '-lomp -L$(brew --prefix libomp)/lib'
+  OPENMP_COMP_FLAGS: '-Xclang -fopenmp -I/usr/local/opt/libomp/include'
+  OPENMP_LINK_FLAGS: '-lomp -L/usr/local/opt/libomp/lib'
 
 jobs:
 
