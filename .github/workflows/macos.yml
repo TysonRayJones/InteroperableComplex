@@ -124,6 +124,7 @@ jobs:
           cat /opt/local/include/libomp/omp.h 
 
       - name: try to move libomp
+        run: |
           cp /opt/local/include/libomp/omp.h /opt/local/include/omp.h
           cp /usr/local/opt/libomp/include/omp.h /opt/local/include/omp.h
 
