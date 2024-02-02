@@ -73,16 +73,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: mpi4py/setup-mpi@v1
+        with:
+          mpi: 'intelmpi'
 
       - name: compile backend
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
-          msmpi -c src/comm.cpp ${{ env.MPI_FLAGS }}
+          mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
 
       - name: compile and link main
         run: |
-          msmpi main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
+          mpicxx main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
 
       - name: run main
         run: |
@@ -145,16 +147,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
       - uses: mpi4py/setup-mpi@v1
+        with:
+          mpi: 'intelmpi'
 
       - name: compile backend
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
-          msmpi -c src/comm.cpp ${{ env.MPI_FLAGS }}
+          mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
 
       - name: compile and link main
         run: |
-          msmpi main.c core.obj alts.obj comm.obj ${{ env.C_FLAGS }}
+          mpicc main.c core.obj alts.obj comm.obj ${{ env.C_FLAGS }}
 
       - name: run main
         run: |
