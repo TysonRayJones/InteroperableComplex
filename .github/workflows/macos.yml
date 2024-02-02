@@ -9,6 +9,7 @@ env:
 
   CUDA_FLAGS: ''
   MPI_FLAGS: '-DDISTRIBUTED_MODE'
+  OPENMP_FLAGS: '-fopenmp'
 
 jobs:
 
@@ -25,7 +26,7 @@ jobs:
           clang++ -c src/core.cpp $CPP_FLAGS -o core.o
           clang++ -c src/alts.cpp $CPP_FLAGS -o alts.o
           clang++ -c src/comm.cpp $CPP_FLAGS -o comm.o
-          clang++ -c src/multi.cpp $CPP_FLAGS -o multi.o
+          clang++ -c src/multi.cpp $CPP_FLAGS $OPENMP_FLAGS -o multi.o
 
       - name: compile and link main
         run: |
