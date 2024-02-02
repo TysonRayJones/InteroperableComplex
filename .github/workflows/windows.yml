@@ -78,11 +78,11 @@ jobs:
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
-          mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
+          mpicc -c src/comm.cpp ${{ env.MPI_FLAGS }}
 
       - name: compile and link main
         run: |
-          mpicxx main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
+          mpicc main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
 
       - name: run main
         run: |
@@ -150,7 +150,7 @@ jobs:
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
-          mpicxx -c src/comm.cpp ${{ env.MPI_FLAGS }}
+          mpicc -c src/comm.cpp ${{ env.MPI_FLAGS }}
 
       - name: compile and link main
         run: |
