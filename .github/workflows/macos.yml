@@ -118,9 +118,17 @@ jobs:
         run: |
           brew install libomp
 
-      - name: move libomp to somewhere clang can actually find it...
-        run : |
-          cp $(brew --prefix libomp)/omp.h /opt/local/include/omp.h
+      - name: brew claims location
+        run: |
+          echo $(brew --prefix libomp)
+
+      - name: but let's try to find it manually
+        run: |
+          find / -name omp.h
+
+      - name: does brew's location even exist?
+        run: |
+          ls $(brew --prefix libomp)
 
       - name: compile backend
         run: |

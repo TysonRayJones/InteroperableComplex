@@ -16,7 +16,7 @@ env:
   MPI_FLAGS: '-Isrc -std=c++14 -DDISTRIBUTED_MODE'
 
   OPENMP_FLAGS: '-openmp'
-  CUDA_OPENMP_LINK_FLAGS: '-lgomp'
+  CUDA_OPENMP_LINK_FLAGS: '-Xcompile -openmp'
 
 jobs:
 
