@@ -5,10 +5,10 @@ on:
 
 env:
   # MSVC doesn't support C99, but C++14 has similar conformance
-  C_FLAGS: -Isrc -std:c++14
+  C_FLAGS: -Isrc -std=c++14
 
   # MSVC requires : syntax
-  CPP_FLAGS: -Isrc -std:c++14
+  CPP_FLAGS: -Isrc -std=c++14
 
   # NVCC requires = syntax (yes, really!)
   CUDA_FLAGS: -Isrc -std=c++14 -arch=sm_61 -lcudart
