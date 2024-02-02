@@ -13,6 +13,8 @@ env:
   # NVCC requires = syntax (yes, really!)
   CUDA_FLAGS: -Isrc -std=c++14 -arch=sm_61 -lcudart
 
+  MPI_FLAGS: '-Isrc -std=c++14 -DDISTRIBUTED_MODE'
+
 jobs:
 
   cpp_cpu:
@@ -27,10 +29,11 @@ jobs:
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile and link main
         run: |
-          cl main.cpp core.obj alts.obj ${{ env.CPP_FLAGS }}
+          cl main.cpp core.obj alts.obj comm.obj ${{ env.CPP_FLAGS }}
 
       - name: run main
         run: |
@@ -52,6 +55,7 @@ jobs:
         run: |
           nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
         run: |
@@ -59,7 +63,8 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj comm.obj ${{ env.CUDA_FLAGS }}
+
 
   c_cpu:
     name: C (CPU)
@@ -73,10 +78,11 @@ jobs:
         run: |
           cl -c src/core.cpp ${{ env.CPP_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile and link main
         run: |
-          cl main.c core.obj alts.obj ${{ env.C_FLAGS }}
+          cl main.c core.obj alts.obj comm.o ${{ env.C_FLAGS }}
 
       - name: arg test
         run : |
@@ -102,6 +108,7 @@ jobs:
         run: |
           nvcc -c src/core.cu ${{ env.CUDA_FLAGS }}
           cl -c src/alts.cpp ${{ env.CPP_FLAGS }}
+          cl -c src/comm.cpp ${{ env.CPP_FLAGS }}
 
       - name: compile main
         run: |
@@ -109,4 +116,4 @@ jobs:
 
       - name: link
         run: |
-          nvcc -o main.exe main.obj core.obj alts.obj ${{ env.CUDA_FLAGS }}
+          nvcc -o main.exe main.obj core.obj alts.obj comm.o ${{ env.CUDA_FLAGS }}
